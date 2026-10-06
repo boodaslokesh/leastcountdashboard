@@ -90,6 +90,195 @@
     .top-nav .nav{min-width:125px}
   }
 
+
+/* ============================================================
+   FINAL MOBILE REDESIGN — NO SIDEWAYS SCROLLING
+   Navigation is always at the top. Data tables become vertical
+   cards on phones, so the page scrolls only up/down.
+   ============================================================ */
+@media (max-width: 640px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  body{font-size:14px}
+
+  /* Header */
+  header{position:sticky;top:0!important;z-index:100;padding-top:env(safe-area-inset-top);}
+  header .max-w-\[1500px\]{width:100%;padding:10px 12px}
+  header .w-10{width:38px;height:38px;min-width:38px}
+  header .font-black{font-size:14px}
+  header .text-\[11px\]{font-size:9px}
+  header .pill{display:none}
+  header #logoutBtn{min-height:38px;padding:8px 12px;font-size:11px}
+
+  /* TOP MENU — fixed-width grid, never horizontally scrollable */
+  .top-nav{
+    position:sticky!important;
+    top:61px!important;
+    z-index:90;
+    width:100%;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px!important;
+    padding:7px!important;
+    margin:0 0 14px!important;
+    overflow:visible!important;
+    border-radius:16px!important;
+    background:rgba(11,22,40,.98)!important;
+    box-shadow:0 8px 24px rgba(0,0,0,.28);
+  }
+  .top-nav .nav{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+    min-height:46px!important;
+    padding:9px 8px!important;
+    border-radius:11px!important;
+    display:flex!important;
+    white-space:normal!important;
+    text-align:center!important;
+    line-height:1.15!important;
+    font-size:11px!important;
+    overflow:hidden;
+  }
+  .top-nav .nav:last-child{grid-column:1 / -1}
+  .top-nav .nav .pill{display:inline-flex!important;float:none!important;margin-left:4px!important;font-size:9px!important;padding:2px 6px!important}
+
+  /* Main content */
+  #app > div.max-w-\[1500px\]{width:100%;padding:10px 10px 28px!important}
+  main{width:100%!important;min-width:0!important;overflow:visible!important}
+  .section{width:100%;min-width:0}
+  .section-title{font-size:20px!important}
+  h2.text-2xl{font-size:20px!important}
+  .card{max-width:100%;border-radius:14px}
+  .card.p-5{padding:14px!important}
+  .card.p-4{padding:12px!important}
+
+  /* Overview cards */
+  #section-overview .grid{grid-template-columns:1fr!important;gap:10px!important}
+  #section-overview .card{min-width:0!important}
+
+  /* Filter controls */
+  #section-requests .card.flex,
+  #section-transactions .card.flex,
+  #section-profit-analytics .card.flex,
+  #section-withdrawals .card.flex{display:flex!important;flex-direction:column!important;gap:9px!important}
+  #section-requests .card.flex > *,
+  #section-transactions .card.flex > *,
+  #section-profit-analytics .card.flex > *,
+  #section-withdrawals .card.flex > *{width:100%!important;max-width:none!important}
+  .input{width:100%;min-width:0;font-size:14px;padding:11px 12px}
+  .btn{min-height:42px;font-size:12px;padding:10px 12px}
+
+  /* ==========================================================
+     ALL DATA TABLES -> MOBILE CARDS
+     No horizontal scrolling on phones.
+     ========================================================== */
+  .table-wrap{
+    width:100%!important;
+    max-width:100%!important;
+    overflow:visible!important;
+    -webkit-overflow-scrolling:auto!important;
+    box-shadow:none!important;
+    border-radius:14px!important;
+  }
+  .table-wrap table{
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    table-layout:auto!important;
+  }
+  .table-wrap thead{display:none!important}
+  .table-wrap tbody{display:block!important;width:100%!important}
+  .table-wrap tbody tr{
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    margin:0 0 10px!important;
+    padding:7px 12px!important;
+    border:1px solid #1e293b!important;
+    border-radius:14px!important;
+    background:#0b1628!important;
+    box-shadow:0 8px 22px rgba(0,0,0,.16);
+  }
+  .table-wrap tbody tr:hover td{background:transparent!important}
+  .table-wrap tbody td{
+    display:grid!important;
+    grid-template-columns:minmax(92px,42%) minmax(0,58%)!important;
+    align-items:center!important;
+    gap:8px!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    padding:9px 0!important;
+    border-bottom:1px solid #172235!important;
+    font-size:12px!important;
+    line-height:1.3!important;
+    overflow-wrap:anywhere!important;
+    word-break:break-word!important;
+  }
+  .table-wrap tbody td:last-child{border-bottom:0!important}
+  .table-wrap tbody td::before{
+    content:attr(data-label);
+    display:block;
+    color:#64748b;
+    font-size:9px;
+    font-weight:900;
+    line-height:1.25;
+    text-transform:uppercase;
+    letter-spacing:.045em;
+  }
+  .table-wrap tbody td > *{max-width:100%;min-width:0}
+  .table-wrap tbody td .btn{width:100%;min-height:38px;white-space:normal}
+
+  /* Action cells look like a normal full-width control */
+  .table-wrap tbody td[data-label="Action"],
+  .table-wrap tbody td[data-label="Wallet Actions"]{
+    grid-template-columns:1fr!important;
+    padding-top:11px!important;
+  }
+  .table-wrap tbody td[data-label="Action"]::before,
+  .table-wrap tbody td[data-label="Wallet Actions"]::before{margin-bottom:6px}
+
+  /* Profit cards: make the most important numbers visually stronger */
+  #profitGamesTable td[data-label="Pot"] > *,
+  #profitGamesTable td[data-label="House 5%"] > *,
+  #profitGamesTable td[data-label="Winner Gets"] > *{
+    font-weight:900;
+  }
+
+  /* Daily profit table can stay compact */
+  #profitDailyTable tr{padding-top:4px!important;padding-bottom:4px!important}
+
+  /* Modals */
+  #creditModal,#walletEditModal{padding:10px!important;align-items:flex-start!important;overflow-y:auto}
+  #creditModal > div,#walletEditModal > div{
+    width:100%!important;
+    max-width:100%!important;
+    max-height:calc(100dvh - 20px)!important;
+    margin:0!important;
+    padding:16px!important;
+    border-radius:16px!important;
+    overflow-y:auto!important;
+  }
+  #requestDetails,#walletEditModal .grid{grid-template-columns:1fr!important}
+  #requestDetails > *,.wallet-edit-card{grid-column:auto!important}
+  #creditModal .flex.gap-2{flex-direction:column!important}
+  #creditModal .flex.gap-2 .btn{width:100%!important}
+
+  /* Toast */
+  #toast{left:10px!important;right:10px!important;bottom:10px!important;text-align:center!important}
+}
+
+@media (max-width:380px){
+  #app > div.max-w-\[1500px\]{padding-left:7px!important;padding-right:7px!important}
+  .top-nav{gap:5px!important;padding:6px!important}
+  .top-nav .nav{font-size:10px!important;min-height:44px!important;padding:8px 5px!important}
+  .table-wrap tbody tr{padding-left:9px!important;padding-right:9px!important}
+  .table-wrap tbody td{grid-template-columns:minmax(78px,39%) minmax(0,61%)!important;font-size:11px!important}
+  .table-wrap tbody td::before{font-size:8px!important}
+}
+
 </style>
 </head>
 <body>
@@ -704,6 +893,36 @@ document.getElementById('adminPassword').addEventListener('keydown',e=>{if(e.key
 document.getElementById('logoutBtn').addEventListener('click',()=>{sessionStorage.removeItem('lc_admin');location.reload()});
 async function login(){const id=document.getElementById('adminId').value.trim(),pw=document.getElementById('adminPassword').value,er=document.getElementById('loginError');if(id!==ADMIN_ID||pw!==ADMIN_PASSWORD){er.textContent='Invalid admin ID or password.';er.classList.remove('hidden');return}sessionStorage.setItem('lc_admin','1');document.getElementById('loginScreen').classList.add('hidden');document.getElementById('app').classList.remove('hidden');await refreshAll()}
 if(sessionStorage.getItem('lc_admin')==='1'){document.getElementById('loginScreen').classList.add('hidden');document.getElementById('app').classList.remove('hidden');refreshAll()}
+</script>
+
+<script>
+/* ============================================================
+   MOBILE TABLE LABELS
+   Converts every dashboard table into readable vertical cards on
+   phones. This does not alter the data or business logic.
+   ============================================================ */
+(function(){
+  function labelTables(root=document){
+    root.querySelectorAll('.table-wrap table').forEach(function(table){
+      const headers=[...table.querySelectorAll('thead th')].map(function(th){
+        return (th.textContent||'').replace(/\s+/g,' ').trim();
+      });
+      if(!headers.length)return;
+      table.querySelectorAll('tbody tr').forEach(function(tr){
+        [...tr.children].forEach(function(td,i){
+          if(td.tagName!=='TD')return;
+          const label=headers[i]||'Details';
+          td.setAttribute('data-label',label);
+        });
+      });
+    });
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    labelTables();
+    const observer=new MutationObserver(function(){ labelTables(); });
+    observer.observe(document.getElementById('app')||document.body,{subtree:true,childList:true});
+  });
+})();
 </script>
 </body>
 </html>
