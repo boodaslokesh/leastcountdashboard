@@ -279,6 +279,280 @@
   .table-wrap tbody td::before{font-size:8px!important}
 }
 
+
+/* ================================================================
+   APP-STYLE MOBILE UI — FINAL OVERRIDE
+   No horizontal scrolling. Tables become compact grid cards.
+   ================================================================ */
+html,body{width:100%;max-width:100%;overflow-x:hidden!important}
+body{background:#050b16}
+button,input,select{font:inherit}
+
+@media (max-width:700px){
+  /* ---------- App shell ---------- */
+  #app{width:100%;max-width:100%;overflow-x:hidden;background:#050b16}
+  #app>header{position:sticky;top:0;z-index:100;height:62px;background:rgba(5,11,22,.97);border-bottom:1px solid #172338;box-shadow:0 5px 22px rgba(0,0,0,.28)}
+  #app>header>div{height:62px;padding:8px 10px!important}
+  #app>header .w-10{width:38px;height:38px;min-width:38px;border-radius:12px;font-size:18px}
+  #app>header .font-black{font-size:14px;line-height:16px}
+  #app>header .text-\[11px\]{font-size:8px;line-height:11px}
+  #app>header .pill{font-size:8px;padding:4px 7px}
+  #logoutBtn{padding:8px 10px;font-size:10px;border-radius:9px}
+
+  /* ---------- Main app container ---------- */
+  #app>.max-w-\[1500px\]{padding:0!important;width:100%;max-width:100%}
+  #app>.max-w-\[1500px\]>.block{width:100%;display:block}
+  #app main{width:100%;max-width:100%;min-width:0;padding:10px!important;overflow:visible}
+  .section{width:100%;max-width:100%;min-width:0;overflow:visible}
+
+  /* ---------- Top app menu ---------- */
+  aside{width:100%!important;margin:0!important;padding:7px 8px 6px!important;position:sticky;top:62px;z-index:90;background:rgba(5,11,22,.97);backdrop-filter:blur(18px);border-bottom:1px solid #172338;box-shadow:0 8px 22px rgba(0,0,0,.25)}
+  .top-nav{
+    position:static!important;
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:6px!important;
+    padding:5px!important;
+    margin:0!important;
+    overflow:visible!important;
+    border-radius:15px!important;
+    background:#0a1424!important;
+    border:1px solid #1b2a40!important;
+    box-shadow:none!important;
+  }
+  .top-nav .nav{
+    width:100%!important;
+    min-width:0!important;
+    min-height:48px!important;
+    height:48px!important;
+    margin:0!important;
+    padding:5px 3px!important;
+    border-radius:11px!important;
+    border:1px solid transparent!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:2px!important;
+    text-align:center!important;
+    white-space:normal!important;
+    overflow:hidden!important;
+    font-size:9.5px!important;
+    line-height:11px!important;
+    font-weight:800!important;
+    color:#94a3b8;
+  }
+  .top-nav .nav::first-letter{font-size:14px}
+  .top-nav .nav.nav-active{
+    background:linear-gradient(180deg,#129bd6,#0878b0)!important;
+    border-color:#32b7ef!important;
+    color:#fff!important;
+    box-shadow:0 5px 14px rgba(14,165,233,.22)!important;
+  }
+  .top-nav .nav.btn-muted{background:#111d30!important}
+  .top-nav .nav.btn-muted:hover{background:#18263b!important}
+  .top-nav .nav:nth-child(7){grid-column:1 / -1!important}
+  .top-nav .nav .pill{font-size:7px!important;padding:2px 5px!important;margin:1px 0 0!important;line-height:9px!important;display:inline-flex!important}
+
+  /* ---------- Page headings ---------- */
+  .section>div:first-child{margin-bottom:12px!important}
+  .section h2{font-size:19px!important;line-height:23px!important;letter-spacing:-.02em}
+  .section h3{font-size:14px!important}
+  .section p.text-sm{font-size:10px!important;line-height:15px!important}
+  .section .mb-6{margin-bottom:12px!important}
+  .section .mb-5{margin-bottom:10px!important}
+
+  /* ---------- Cards ---------- */
+  .card{border-radius:14px!important;border-color:#1a2a40!important;box-shadow:0 5px 18px rgba(0,0,0,.12)}
+  .card.p-5{padding:13px!important}
+  .card.p-4{padding:10px!important}
+
+  /* ---------- Overview ---------- */
+  #section-overview .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  #section-overview .grid:first-of-type>.card{padding:12px 10px!important;min-height:88px}
+  #section-overview .grid:first-of-type>.card p.text-3xl{font-size:22px!important;line-height:25px!important;margin-top:5px!important}
+  #section-overview .grid:first-of-type>.card p.text-xs{font-size:9px!important}
+  #section-overview .grid:first-of-type>.card p.text-\[10px\]{font-size:8px!important;line-height:11px!important}
+  #section-overview .grid.xl\\:grid-cols-2{grid-template-columns:1fr!important}
+
+  /* ---------- Inputs / filters ---------- */
+  .input{min-height:42px!important;padding:10px 11px!important;border-radius:10px!important;font-size:12px!important}
+  .filter-label,#section-transactions label{font-size:9px!important;margin-bottom:4px!important}
+  .btn{min-height:40px;padding:9px 11px!important;border-radius:10px!important;font-size:11px!important}
+  .flex.flex-col.md\\:flex-row,.flex.flex-col.xl\\:flex-row{width:100%!important}
+
+  /* ---------- ZERO horizontal scrolling: every table is a grid ---------- */
+  .table-wrap{
+    width:100%!important;
+    max-width:100%!important;
+    overflow:hidden!important;
+    border-radius:13px!important;
+    padding:0!important;
+    background:#081321!important;
+  }
+  .table-wrap table{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    table-layout:fixed!important;
+    border-collapse:separate!important;
+    border-spacing:0!important;
+  }
+  .table-wrap thead{display:none!important}
+  .table-wrap tbody{display:block!important;width:100%!important}
+  .table-wrap tbody tr{
+    width:100%!important;
+    max-width:100%!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    margin:0!important;
+    padding:0!important;
+    background:#0a1626!important;
+    border-bottom:7px solid #050b16!important;
+    overflow:hidden!important;
+  }
+  .table-wrap tbody tr:last-child{border-bottom:0!important}
+  .table-wrap tbody td{
+    min-width:0!important;
+    max-width:100%!important;
+    width:auto!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:center!important;
+    gap:3px!important;
+    padding:9px 10px!important;
+    margin:0!important;
+    border-right:1px solid #1b2a3d!important;
+    border-bottom:1px solid #1b2a3d!important;
+    background:#0a1626!important;
+    font-size:10.5px!important;
+    line-height:14px!important;
+    overflow:hidden!important;
+    word-break:break-word!important;
+    overflow-wrap:anywhere!important;
+  }
+  .table-wrap tbody td:nth-child(2n){border-right:0!important}
+  .table-wrap tbody td::before{
+    display:block!important;
+    content:attr(data-label)!important;
+    color:#64748b!important;
+    font-size:7.5px!important;
+    font-weight:900!important;
+    line-height:10px!important;
+    text-transform:uppercase!important;
+    letter-spacing:.07em!important;
+  }
+  .table-wrap tbody td[data-label=""]::before{display:none!important}
+  .table-wrap tbody td > *{max-width:100%!important;min-width:0!important;word-break:break-word!important}
+  .table-wrap tbody td .btn{width:100%!important;min-height:34px!important;padding:7px 6px!important;font-size:9px!important;white-space:normal!important}
+  .table-wrap tbody td:last-child{border-bottom:0!important}
+
+  /* Labels for each admin table */
+  #requestsTable td:nth-child(1)::before{content:'USER'!important}
+  #requestsTable td:nth-child(2)::before{content:'MOBILE'!important}
+  #requestsTable td:nth-child(3)::before{content:'UTR / TRANSACTION ID'!important}
+  #requestsTable td:nth-child(4)::before{content:'AMOUNT'!important}
+  #requestsTable td:nth-child(5)::before{content:'WALLET BEFORE'!important}
+  #requestsTable td:nth-child(6)::before{content:'REQUESTED AT'!important}
+  #requestsTable td:nth-child(7)::before{content:'STATUS'!important}
+  #requestsTable td:nth-child(8)::before{content:'ACTION'!important}
+  #requestsTable td:nth-child(8){grid-column:1 / -1!important;border-right:0!important}
+
+  #usersTable td:nth-child(1)::before{content:'USER'!important}
+  #usersTable td:nth-child(2)::before{content:'MOBILE'!important}
+  #usersTable td:nth-child(3)::before{content:'DEMO / BOT WALLET'!important}
+  #usersTable td:nth-child(4)::before{content:'REAL WALLET'!important}
+  #usersTable td:nth-child(5)::before{content:'COIN REQUEST'!important}
+  #usersTable td:nth-child(6)::before{content:'WALLET ACTIONS'!important}
+  #usersTable td:nth-child(6){grid-column:1 / -1!important;border-right:0!important}
+
+  #transactionsTable td:nth-child(1)::before{content:'DATE'!important}
+  #transactionsTable td:nth-child(2)::before{content:'USER'!important}
+  #transactionsTable td:nth-child(3)::before{content:'TYPE'!important}
+  #transactionsTable td:nth-child(4)::before{content:'AMOUNT'!important}
+  #transactionsTable td:nth-child(5)::before{content:'BEFORE'!important}
+  #transactionsTable td:nth-child(6)::before{content:'AFTER'!important}
+  #transactionsTable td:nth-child(7)::before{content:'DESCRIPTION'!important}
+  #transactionsTable td:nth-child(8)::before{content:'UTR / REFERENCE'!important}
+  #transactionsTable td:nth-child(7),#transactionsTable td:nth-child(8){grid-column:1 / -1!important;border-right:0!important}
+
+  #profitGamesTable td:nth-child(1)::before{content:'GAME / REFERENCE'!important}
+  #profitGamesTable td:nth-child(2)::before{content:'DATE'!important}
+  #profitGamesTable td:nth-child(3)::before{content:'REAL PLAYERS'!important}
+  #profitGamesTable td:nth-child(4)::before{content:'BET / PLAYER'!important}
+  #profitGamesTable td:nth-child(5)::before{content:'TOTAL POT'!important}
+  #profitGamesTable td:nth-child(6)::before{content:'HOUSE 5%'!important}
+  #profitGamesTable td:nth-child(7)::before{content:'WINNER'!important}
+  #profitGamesTable td:nth-child(8)::before{content:'WINNER GETS'!important}
+  #profitGamesTable td:nth-child(9)::before{content:'NET PROFIT'!important}
+  #profitGamesTable td:nth-child(9){grid-column:1 / -1!important;border-right:0!important;background:#0c1b2d!important}
+  #profitGamesTable td:nth-child(5),#profitGamesTable td:nth-child(6),#profitGamesTable td:nth-child(8),#profitGamesTable td:nth-child(9){font-size:12px!important;font-weight:900!important}
+
+  #profitDailyTable td:nth-child(1)::before{content:'DATE'!important}
+  #profitDailyTable td:nth-child(2)::before{content:'GAMES'!important}
+  #profitDailyTable td:nth-child(3)::before{content:'POT / ENTRY'!important}
+  #profitDailyTable td:nth-child(4)::before{content:'HOUSE PROFIT'!important}
+
+  #withdrawalsTable td:nth-child(1)::before{content:'USER'!important}
+  #withdrawalsTable td:nth-child(2)::before{content:'MOBILE'!important}
+  #withdrawalsTable td:nth-child(3)::before{content:'AMOUNT'!important}
+  #withdrawalsTable td:nth-child(4)::before{content:'UPI ID'!important}
+  #withdrawalsTable td:nth-child(5)::before{content:'REQUESTED AT'!important}
+  #withdrawalsTable td:nth-child(6)::before{content:'STATUS'!important}
+  #withdrawalsTable td:nth-child(7)::before{content:'ACTION'!important}
+  #withdrawalsTable td:nth-child(7){grid-column:1 / -1!important;border-right:0!important}
+
+  /* Empty-state rows should remain normal full-width blocks */
+  .table-wrap tbody tr td[colspan]{display:block!important;grid-column:1 / -1!important;border:0!important;text-align:center!important;padding:28px 12px!important}
+  .table-wrap tbody tr td[colspan]::before{display:none!important}
+
+  /* ---------- Profit cards ---------- */
+  #section-profit-analytics .grid.grid-cols-1.sm\\:grid-cols-2.xl\\:grid-cols-4{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+  #section-profit-analytics .grid.grid-cols-1.sm\\:grid-cols-2.xl\\:grid-cols-4 .card{padding:11px 9px!important;min-height:92px}
+  #section-profit-analytics .grid.grid-cols-1.sm\\:grid-cols-2.xl\\:grid-cols-4 .text-3xl{font-size:20px!important;line-height:24px!important}
+  #section-profit-analytics .grid.xl\\:grid-cols-2{grid-template-columns:1fr!important}
+  #section-profit-analytics .table-wrap{margin-left:0!important;margin-right:0!important}
+
+  /* ---------- Action groups ---------- */
+  #usersTable td:last-child>div,#requestsTable td:last-child>div,#withdrawalsTable td:last-child>div{display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important;width:100%!important}
+  #usersTable td:last-child .btn,#requestsTable td:last-child .btn,#withdrawalsTable td:last-child .btn{width:100%!important}
+
+  /* ---------- Modals: true phone app sheets ---------- */
+  #creditModal,#walletEditModal{padding:8px!important;align-items:flex-end!important}
+  #creditModal>div,#walletEditModal>div{
+    width:100%!important;max-width:none!important;max-height:92dvh!important;
+    padding:15px!important;border-radius:20px 20px 14px 14px!important;
+    overflow-y:auto!important;box-shadow:0 -15px 45px rgba(0,0,0,.5)!important;
+  }
+  #creditModal .grid,#walletEditModal .grid{gap:7px!important}
+  #creditModal .grid>div,#walletEditModal .grid>div{padding:10px!important}
+  #creditModal .flex.gap-2,#walletEditModal .flex.gap-2{display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important}
+  #creditModal #confirmCreditBtn{grid-column:1 / -1!important}
+  #creditModal #rejectRequestBtn{grid-column:1!important}
+  #creditModal .btn,#walletEditModal .btn{width:100%!important}
+
+  /* ---------- Settings ---------- */
+  #section-settings .card{font-size:11px!important}
+
+  /* ---------- Toast ---------- */
+  #toast{left:10px!important;right:10px!important;bottom:10px!important;text-align:center!important;font-size:11px!important}
+}
+
+@media (max-width:380px){
+  #app>header>div{padding-left:7px!important;padding-right:7px!important}
+  #app>header .pill{display:none!important}
+  #logoutBtn{font-size:9px!important;padding:7px 8px!important}
+  aside{padding-left:5px!important;padding-right:5px!important}
+  .top-nav{gap:4px!important;padding:4px!important}
+  .top-nav .nav{height:46px!important;min-height:46px!important;font-size:8.5px!important;line-height:10px!important}
+  #app main{padding:8px!important}
+  .section h2{font-size:18px!important}
+  .card.p-5{padding:11px!important}
+  .table-wrap tbody td{padding:8px 8px!important;font-size:10px!important}
+  .table-wrap tbody td::before{font-size:7px!important}
+}
+
 </style>
 </head>
 <body>
