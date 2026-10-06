@@ -738,6 +738,255 @@ button,input,select{font:inherit}
 }
 
 </style>
+
+<style id="perfect-mobile-table-layout">
+/* ================================================================
+   PERFECT MOBILE ADMIN PANEL
+   - Real HTML tables on every screen size
+   - Full borders / grid lines
+   - No card conversion
+   - No horizontal scrolling
+   - Every original column remains visible
+   ================================================================ */
+*{box-sizing:border-box}
+html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden!important}
+body{min-width:0!important}
+#app{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
+#app main,#app header,#app aside,#app section,.section,.card{min-width:0!important;max-width:100%!important}
+
+@media (max-width: 640px){
+  /* ---------- overall phone layout ---------- */
+  #app > header{position:sticky!important;top:0!important;z-index:40!important}
+  #app > header > div{width:100%!important;max-width:none!important;padding:9px 10px!important;min-width:0!important}
+  #app > header h1{font-size:14px!important;line-height:17px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #app > header p{font-size:8px!important;line-height:10px!important}
+  #logoutBtn{font-size:9px!important;padding:7px 9px!important;white-space:nowrap!important}
+
+  #app > div.max-w-\[1500px\]{width:100%!important;max-width:none!important;padding:8px!important;margin:0!important}
+  #app main{padding:0!important;margin:0!important;width:100%!important}
+
+  /* ---------- top menu: compact app-like grid ---------- */
+  aside{width:100%!important;margin:0 0 9px!important;padding:0!important}
+  .top-nav{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:5px!important;
+    padding:5px!important;
+    margin:0!important;
+    overflow:visible!important;
+    border:1px solid #26364b!important;
+    border-radius:11px!important;
+  }
+  .top-nav .nav,
+  .top-nav .nav:last-child{
+    width:100%!important;
+    min-width:0!important;
+    min-height:40px!important;
+    height:40px!important;
+    margin:0!important;
+    padding:5px 4px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    text-align:center!important;
+    gap:2px!important;
+    border:1px solid #30445b!important;
+    border-radius:8px!important;
+    font-size:9px!important;
+    line-height:11px!important;
+    white-space:normal!important;
+    overflow:hidden!important;
+  }
+  .top-nav .nav .pill{font-size:7px!important;padding:1px 4px!important;margin-left:2px!important;float:none!important}
+
+  /* ---------- headings / cards ---------- */
+  .section > .mb-6{margin-bottom:9px!important}
+  .section h2{font-size:18px!important;line-height:22px!important}
+  .section p{font-size:9px}
+  .card{min-width:0!important;max-width:100%!important}
+  .card.p-5{padding:10px!important}
+  .grid{min-width:0!important;max-width:100%!important}
+
+  /* ---------- REAL TABLES ONLY ---------- */
+  .table-wrap{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+    border:1px solid #52657d!important;
+    border-radius:7px!important;
+    background:#060b12!important;
+  }
+  .table-wrap table{
+    display:table!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    table-layout:fixed!important;
+    border-collapse:collapse!important;
+    border-spacing:0!important;
+    margin:0!important;
+  }
+  .table-wrap thead{display:table-header-group!important}
+  .table-wrap tbody{display:table-row-group!important}
+  .table-wrap tr{display:table-row!important;width:auto!important;min-width:0!important;margin:0!important;padding:0!important}
+  .table-wrap th,
+  .table-wrap td{
+    display:table-cell!important;
+    position:static!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    border:1px solid #46566b!important;
+    border-radius:0!important;
+    vertical-align:middle!important;
+    text-align:left!important;
+    padding:5px 3px!important;
+    margin:0!important;
+    line-height:10px!important;
+    font-size:7.4px!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    word-break:break-word!important;
+    hyphens:auto!important;
+    box-shadow:none!important;
+  }
+  .table-wrap th{
+    background:#17202d!important;
+    color:#e5edf7!important;
+    font-size:6.5px!important;
+    line-height:8px!important;
+    font-weight:900!important;
+    text-transform:uppercase!important;
+    letter-spacing:.15px!important;
+    text-align:center!important;
+    white-space:normal!important;
+  }
+  .table-wrap tbody tr:nth-child(even) td{background:#0a111b!important}
+  .table-wrap tbody tr:nth-child(odd) td{background:#070d15!important}
+  .table-wrap tbody tr:hover td{background:#111c2a!important}
+
+  /* Kill the previous mobile card labels completely. */
+  .table-wrap td::before,
+  .table-wrap th::before{display:none!important;content:none!important}
+  .table-wrap td[data-label]::before{display:none!important}
+
+  /* Compact controls inside table cells */
+  .table-wrap button,
+  .table-wrap .btn,
+  .table-wrap a{
+    max-width:100%!important;
+    min-width:0!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:24px!important;
+    padding:4px 2px!important;
+    margin:1px 0!important;
+    font-size:6.5px!important;
+    line-height:8px!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    word-break:break-word!important;
+  }
+  .table-wrap td:last-child > div{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:2px!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+
+  /* ---------- exact column widths: keep every column visible ---------- */
+  #requestsTable th:nth-child(1),#requestsTable td:nth-child(1){width:13%!important}
+  #requestsTable th:nth-child(2),#requestsTable td:nth-child(2){width:10%!important}
+  #requestsTable th:nth-child(3),#requestsTable td:nth-child(3){width:13%!important}
+  #requestsTable th:nth-child(4),#requestsTable td:nth-child(4){width:9%!important}
+  #requestsTable th:nth-child(5),#requestsTable td:nth-child(5){width:10%!important}
+  #requestsTable th:nth-child(6),#requestsTable td:nth-child(6){width:14%!important}
+  #requestsTable th:nth-child(7),#requestsTable td:nth-child(7){width:10%!important}
+  #requestsTable th:nth-child(8),#requestsTable td:nth-child(8){width:21%!important}
+
+  #usersTable th:nth-child(1),#usersTable td:nth-child(1){width:20%!important}
+  #usersTable th:nth-child(2),#usersTable td:nth-child(2){width:14%!important}
+  #usersTable th:nth-child(3),#usersTable td:nth-child(3){width:15%!important}
+  #usersTable th:nth-child(4),#usersTable td:nth-child(4){width:15%!important}
+  #usersTable th:nth-child(5),#usersTable td:nth-child(5){width:11%!important}
+  #usersTable th:nth-child(6),#usersTable td:nth-child(6){width:25%!important}
+
+  #transactionsTable th:nth-child(1),#transactionsTable td:nth-child(1){width:11%!important}
+  #transactionsTable th:nth-child(2),#transactionsTable td:nth-child(2){width:12%!important}
+  #transactionsTable th:nth-child(3),#transactionsTable td:nth-child(3){width:12%!important}
+  #transactionsTable th:nth-child(4),#transactionsTable td:nth-child(4){width:9%!important}
+  #transactionsTable th:nth-child(5),#transactionsTable td:nth-child(5){width:9%!important}
+  #transactionsTable th:nth-child(6),#transactionsTable td:nth-child(6){width:9%!important}
+  #transactionsTable th:nth-child(7),#transactionsTable td:nth-child(7){width:20%!important}
+  #transactionsTable th:nth-child(8),#transactionsTable td:nth-child(8){width:18%!important}
+
+  #profitGamesTable th:nth-child(1),#profitGamesTable td:nth-child(1){width:14%!important}
+  #profitGamesTable th:nth-child(2),#profitGamesTable td:nth-child(2){width:10%!important}
+  #profitGamesTable th:nth-child(3),#profitGamesTable td:nth-child(3){width:10%!important}
+  #profitGamesTable th:nth-child(4),#profitGamesTable td:nth-child(4){width:10%!important}
+  #profitGamesTable th:nth-child(5),#profitGamesTable td:nth-child(5){width:10%!important}
+  #profitGamesTable th:nth-child(6),#profitGamesTable td:nth-child(6){width:10%!important}
+  #profitGamesTable th:nth-child(7),#profitGamesTable td:nth-child(7){width:12%!important}
+  #profitGamesTable th:nth-child(8),#profitGamesTable td:nth-child(8){width:12%!important}
+  #profitGamesTable th:nth-child(9),#profitGamesTable td:nth-child(9){width:12%!important}
+
+  #profitDailyTable th:nth-child(1),#profitDailyTable td:nth-child(1){width:28%!important}
+  #profitDailyTable th:nth-child(2),#profitDailyTable td:nth-child(2){width:22%!important}
+  #profitDailyTable th:nth-child(3),#profitDailyTable td:nth-child(3){width:25%!important}
+  #profitDailyTable th:nth-child(4),#profitDailyTable td:nth-child(4){width:25%!important}
+
+  #withdrawalsTable th:nth-child(1),#withdrawalsTable td:nth-child(1){width:16%!important}
+  #withdrawalsTable th:nth-child(2),#withdrawalsTable td:nth-child(2){width:12%!important}
+  #withdrawalsTable th:nth-child(3),#withdrawalsTable td:nth-child(3){width:10%!important}
+  #withdrawalsTable th:nth-child(4),#withdrawalsTable td:nth-child(4){width:18%!important}
+  #withdrawalsTable th:nth-child(5),#withdrawalsTable td:nth-child(5){width:14%!important}
+  #withdrawalsTable th:nth-child(6),#withdrawalsTable td:nth-child(6){width:10%!important}
+  #withdrawalsTable th:nth-child(7),#withdrawalsTable td:nth-child(7){width:20%!important}
+
+  /* ---------- filters: fit the phone ---------- */
+  .filter-grid,
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4,
+  #section-transactions .grid,
+  #section-profit-analytics .grid{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  input,select{max-width:100%!important;min-width:0!important}
+
+  /* ---------- modals ---------- */
+  #creditModal,#walletEditModal{padding:7px!important;align-items:flex-end!important;overflow-y:auto!important}
+  #creditModal>div,#walletEditModal>div{
+    width:100%!important;
+    max-width:100%!important;
+    max-height:94dvh!important;
+    margin:0!important;
+    padding:13px!important;
+    border-radius:16px 16px 9px 9px!important;
+    overflow-y:auto!important;
+  }
+  #requestDetails,#walletEditModal .grid{grid-template-columns:1fr!important}
+  #requestDetails>*{grid-column:auto!important}
+  #creditModal .flex.gap-2,#walletEditModal .flex.gap-2{display:grid!important;grid-template-columns:1fr 1fr!important;gap:5px!important}
+  #creditModal .btn,#walletEditModal .btn{width:100%!important;min-width:0!important}
+  #toast{left:8px!important;right:8px!important;bottom:8px!important;text-align:center!important;font-size:10px!important}
+}
+
+@media (max-width:380px){
+  #app > div.max-w-\[1500px\]{padding:6px!important}
+  .top-nav{gap:4px!important;padding:4px!important}
+  .top-nav .nav{height:38px!important;min-height:38px!important;font-size:8px!important;line-height:9px!important}
+  .table-wrap th{font-size:5.7px!important;line-height:7px!important;padding:4px 2px!important}
+  .table-wrap td{font-size:6.6px!important;line-height:8px!important;padding:4px 2px!important}
+  .table-wrap button,.table-wrap .btn,.table-wrap a{font-size:5.8px!important;line-height:7px!important;min-height:22px!important;padding:3px 1px!important}
+}
+</style>
 </head>
 <body>
 
