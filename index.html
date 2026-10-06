@@ -553,6 +553,190 @@ button,input,select{font:inherit}
   .table-wrap tbody td::before{font-size:7px!important}
 }
 
+
+/* ============================================================
+   FINAL APP TABLE MODE
+   Mobile uses REAL HTML TABLES — no cards, no horizontal scroll.
+   Every cell stays inside the viewport with full borders/grid lines.
+   ============================================================ */
+@media (max-width: 640px){
+  html,body,#app{width:100%!important;max-width:100%!important;overflow-x:hidden!important}
+
+  /* App-like top menu: compact 3-column grid, no sideways scrolling */
+  .top-nav{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:5px!important;
+    padding:6px!important;
+    overflow:visible!important;
+    position:sticky!important;
+    top:60px!important;
+    border:1px solid #1e293b!important;
+    border-radius:14px!important;
+  }
+  .top-nav .nav,
+  .top-nav .nav:last-child{
+    grid-column:auto!important;
+    min-width:0!important;
+    width:100%!important;
+    height:43px!important;
+    min-height:43px!important;
+    padding:5px 3px!important;
+    margin:0!important;
+    border:1px solid #26364b!important;
+    border-radius:9px!important;
+    font-size:9.5px!important;
+    line-height:11px!important;
+    white-space:normal!important;
+    overflow:hidden!important;
+    text-overflow:clip!important;
+  }
+  .top-nav .nav .pill{font-size:7px!important;padding:1px 4px!important;margin-left:2px!important}
+
+  /* True fitted tables */
+  .table-wrap{
+    width:100%!important;
+    max-width:100%!important;
+    overflow:hidden!important;
+    padding:0!important;
+    margin:0!important;
+    border:1px solid #26364b!important;
+    border-radius:10px!important;
+    background:#081321!important;
+  }
+  .table-wrap table{
+    display:table!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    table-layout:fixed!important;
+    border-collapse:collapse!important;
+    border-spacing:0!important;
+    margin:0!important;
+  }
+  .table-wrap thead{display:table-header-group!important}
+  .table-wrap tbody{display:table-row-group!important;width:auto!important}
+  .table-wrap tr{display:table-row!important;width:auto!important;margin:0!important;padding:0!important;border:0!important}
+  .table-wrap th,
+  .table-wrap td{
+    display:table-cell!important;
+    box-sizing:border-box!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    padding:6px 3px!important;
+    border:1px solid #26364b!important;
+    vertical-align:middle!important;
+    text-align:center!important;
+    font-size:7.2px!important;
+    line-height:9px!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    word-break:break-word!important;
+    overflow:hidden!important;
+  }
+  .table-wrap th{
+    background:#101d31!important;
+    color:#93a4ba!important;
+    font-size:6.7px!important;
+    font-weight:900!important;
+    text-transform:uppercase!important;
+    letter-spacing:.02em!important;
+    height:30px!important;
+  }
+  .table-wrap td{
+    background:#091525!important;
+    color:#dbe5f0!important;
+  }
+  .table-wrap tbody tr:nth-child(even) td{background:#0c192a!important}
+  .table-wrap tbody tr:hover td{background:#102036!important}
+  .table-wrap tbody td::before{display:none!important;content:none!important}
+  .table-wrap tbody td > *{
+    max-width:100%!important;
+    min-width:0!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    word-break:break-word!important;
+    overflow-wrap:anywhere!important;
+  }
+  .table-wrap td .btn{
+    width:100%!important;
+    min-height:27px!important;
+    height:auto!important;
+    padding:4px 2px!important;
+    font-size:7px!important;
+    line-height:8px!important;
+    border-radius:5px!important;
+    white-space:normal!important;
+  }
+  .table-wrap td input,.table-wrap td select{
+    width:100%!important;
+    min-width:0!important;
+    font-size:7px!important;
+    padding:4px 2px!important;
+  }
+  .table-wrap td[colspan]{display:table-cell!important;text-align:center!important;padding:18px 5px!important}
+
+  /* Fixed practical widths per table. Percentages always total 100%. */
+  #requestsTable th:nth-child(1),#requestsTable td:nth-child(1){width:15%}
+  #requestsTable th:nth-child(2),#requestsTable td:nth-child(2){width:10%}
+  #requestsTable th:nth-child(3),#requestsTable td:nth-child(3){width:15%}
+  #requestsTable th:nth-child(4),#requestsTable td:nth-child(4){width:10%}
+  #requestsTable th:nth-child(5),#requestsTable td:nth-child(5){width:11%}
+  #requestsTable th:nth-child(6),#requestsTable td:nth-child(6){width:14%}
+  #requestsTable th:nth-child(7),#requestsTable td:nth-child(7){width:9%}
+  #requestsTable th:nth-child(8),#requestsTable td:nth-child(8){width:16%}
+
+  #usersTable th:nth-child(1),#usersTable td:nth-child(1){width:20%}
+  #usersTable th:nth-child(2),#usersTable td:nth-child(2){width:13%}
+  #usersTable th:nth-child(3),#usersTable td:nth-child(3){width:15%}
+  #usersTable th:nth-child(4),#usersTable td:nth-child(4){width:15%}
+  #usersTable th:nth-child(5),#usersTable td:nth-child(5){width:12%}
+  #usersTable th:nth-child(6),#usersTable td:nth-child(6){width:25%}
+
+  #transactionsTable th:nth-child(1),#transactionsTable td:nth-child(1){width:12%}
+  #transactionsTable th:nth-child(2),#transactionsTable td:nth-child(2){width:13%}
+  #transactionsTable th:nth-child(3),#transactionsTable td:nth-child(3){width:12%}
+  #transactionsTable th:nth-child(4),#transactionsTable td:nth-child(4){width:9%}
+  #transactionsTable th:nth-child(5),#transactionsTable td:nth-child(5){width:9%}
+  #transactionsTable th:nth-child(6),#transactionsTable td:nth-child(6){width:9%}
+  #transactionsTable th:nth-child(7),#transactionsTable td:nth-child(7){width:19%}
+  #transactionsTable th:nth-child(8),#transactionsTable td:nth-child(8){width:17%}
+
+  #profitGamesTable th:nth-child(1),#profitGamesTable td:nth-child(1){width:16%}
+  #profitGamesTable th:nth-child(2),#profitGamesTable td:nth-child(2){width:10%}
+  #profitGamesTable th:nth-child(3),#profitGamesTable td:nth-child(3){width:9%}
+  #profitGamesTable th:nth-child(4),#profitGamesTable td:nth-child(4){width:10%}
+  #profitGamesTable th:nth-child(5),#profitGamesTable td:nth-child(5){width:10%}
+  #profitGamesTable th:nth-child(6),#profitGamesTable td:nth-child(6){width:9%}
+  #profitGamesTable th:nth-child(7),#profitGamesTable td:nth-child(7){width:13%}
+  #profitGamesTable th:nth-child(8),#profitGamesTable td:nth-child(8){width:12%}
+  #profitGamesTable th:nth-child(9),#profitGamesTable td:nth-child(9){width:11%}
+
+  #profitDailyTable th:nth-child(1),#profitDailyTable td:nth-child(1){width:28%}
+  #profitDailyTable th:nth-child(2),#profitDailyTable td:nth-child(2){width:20%}
+  #profitDailyTable th:nth-child(3),#profitDailyTable td:nth-child(3){width:26%}
+  #profitDailyTable th:nth-child(4),#profitDailyTable td:nth-child(4){width:26%}
+
+  #withdrawalsTable th:nth-child(1),#withdrawalsTable td:nth-child(1){width:17%}
+  #withdrawalsTable th:nth-child(2),#withdrawalsTable td:nth-child(2){width:12%}
+  #withdrawalsTable th:nth-child(3),#withdrawalsTable td:nth-child(3){width:10%}
+  #withdrawalsTable th:nth-child(4),#withdrawalsTable td:nth-child(4){width:18%}
+  #withdrawalsTable th:nth-child(5),#withdrawalsTable td:nth-child(5){width:14%}
+  #withdrawalsTable th:nth-child(6),#withdrawalsTable td:nth-child(6){width:10%}
+  #withdrawalsTable th:nth-child(7),#withdrawalsTable td:nth-child(7){width:19%}
+
+  /* Keep filters and buttons inside viewport */
+  .input,.btn{max-width:100%!important;box-sizing:border-box!important}
+  #section-profit-analytics .grid.grid-cols-1.sm\\:grid-cols-2.xl\\:grid-cols-4{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media (max-width:380px){
+  .top-nav .nav{font-size:8.5px!important;padding:4px 2px!important}
+  .table-wrap th,.table-wrap td{font-size:6.5px!important;padding:5px 2px!important;line-height:8px!important}
+  .table-wrap th{font-size:6px!important}
+  .table-wrap td .btn{font-size:6.3px!important;padding:3px 1px!important}
+}
+
 </style>
 </head>
 <body>
