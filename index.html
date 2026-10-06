@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Least Count — Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  *{box-sizing:border-box} body{margin:0;background:#07111f;color:#e5e7eb;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  .glass{background:rgba(15,23,42,.82);border:1px solid rgba(148,163,184,.13);box-shadow:0 20px 50px rgba(0,0,0,.25);backdrop-filter:blur(14px)}
+  .card{background:#0b1628;border:1px solid #1e293b;border-radius:18px}
+  .input{width:100%;background:#07111f;border:1px solid #334155;border-radius:12px;padding:12px 14px;color:white;outline:none}.input:focus{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.1)}
+  .btn{border-radius:11px;padding:10px 14px;font-weight:700;transition:.15s;cursor:pointer}.btn:disabled{opacity:.45;cursor:not-allowed}.btn-primary{background:#0ea5e9;color:white}.btn-primary:hover{background:#0284c7}.btn-green{background:#10b981;color:white}.btn-green:hover{background:#059669}.btn-red{background:#ef4444;color:white}.btn-red:hover{background:#dc2626}.btn-muted{background:#1e293b;color:#cbd5e1}.btn-muted:hover{background:#334155}
+  .pill{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:800}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:760px}th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;text-align:left;padding:13px;border-bottom:1px solid #1e293b;background:#0b1628;position:sticky;top:0}td{padding:13px;border-bottom:1px solid #172235;font-size:13px}tr:hover td{background:rgba(30,41,59,.35)}
+  .nav-active{background:#0ea5e9;color:white}.toast{animation:slide .25s ease}@keyframes slide{from{transform:translateY(15px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .filter-label{display:block;font-size:11px;font-weight:800;color:#94a3b8;margin-bottom:7px;text-transform:uppercase;letter-spacing:.05em}.section-title{font-weight:900}select.input{cursor:pointer}.card{transition:border-color .15s ease}.card:hover{border-color:#334155}
+  .section-title{letter-spacing:-.02em}.filter-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#64748b}
+  select.input{cursor:pointer}.card{transition:border-color .15s ease,transform .15s ease}.card:hover{border-color:rgba(56,189,248,.18)}
+
+  /* =========================================================
+     RESPONSIVE ADMIN UI
+     Top navigation + mobile-first layout
+     ========================================================= */
+  html{scroll-behavior:smooth}
+  body{overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+  #app{min-height:100dvh}
+  header{padding-top:env(safe-area-inset-top)}
+  .top-nav{position:sticky;top:64px;z-index:25;display:flex;align-items:center;gap:7px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:7px;background:rgba(11,22,40,.96);backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.18)}
+  .top-nav::-webkit-scrollbar{display:none}
+  .top-nav .nav{width:auto!important;min-width:max-content;flex:0 0 auto;margin:0!important;text-align:center!important;white-space:nowrap;padding:10px 13px;display:inline-flex;align-items:center;justify-content:center;gap:4px;border:1px solid transparent}
+  .top-nav .nav.btn-muted{background:transparent}
+  .top-nav .nav.btn-muted:hover{background:#1e293b}
+  .top-nav .nav.nav-active{box-shadow:0 5px 18px rgba(14,165,233,.18)}
+  .top-nav .nav .pill{float:none!important;margin-left:5px}
+  main{padding-bottom:max(28px,env(safe-area-inset-bottom))}
+  .table-wrap{-webkit-overflow-scrolling:touch;border-radius:18px}
+  .table-wrap table{min-width:760px}
+  button,.btn,input,select{touch-action:manipulation}
+  button{min-height:42px}
+  .btn{display:inline-flex;align-items:center;justify-content:center}
+  .section-title{line-height:1.2}
+  .stat-card{}
+
+  @media (max-width: 640px){
+    header .max-w-\[1500px\]{padding-left:12px;padding-right:12px}
+    header .py-4{padding-top:11px;padding-bottom:11px}
+    header .w-10{width:38px;height:38px}
+    header .text-\[11px\]{font-size:10px}
+    header .font-black{font-size:14px}
+    header .pill{display:none}
+    header #logoutBtn{padding:9px 12px;font-size:11px}
+
+    .top-nav{top:61px;margin-left:-1px;margin-right:-1px;border-radius:14px;padding:6px;gap:5px}
+    .top-nav .nav{font-size:12px;padding:9px 11px;border-radius:10px}
+
+    .card{border-radius:15px}
+    .card.p-5{padding:16px}
+    .card.p-4{padding:12px}
+    .input{font-size:14px;padding:12px 13px}
+    .btn{font-size:13px;padding:10px 12px}
+
+    h2.text-2xl{font-size:21px;line-height:1.2}
+    .text-3xl{font-size:28px}
+
+    /* Dashboard cards */
+    #section-overview .grid{gap:10px}
+    #section-overview .grid > .card{min-width:0}
+
+    /* Filters stack cleanly */
+    #section-requests .card.flex,
+    #section-transactions .card.flex,
+    #section-profit-analytics .card.flex{gap:9px}
+
+    /* Tables remain fully usable by horizontal swipe rather than crushing columns */
+    .table-wrap{width:100%;overflow-x:auto;box-shadow:inset -18px 0 25px -25px rgba(0,0,0,.8)}
+    .table-wrap table{min-width:780px}
+    th{padding:11px 10px;font-size:10px}
+    td{padding:11px 10px;font-size:12px}
+
+    /* Make action buttons comfortable on phones */
+    td .btn{min-height:38px;font-size:11px;padding:8px 10px}
+
+    /* Modal/dialog content */
+    [id$="Modal"] > div,
+    [id*="Modal"] > div{max-width:calc(100vw - 24px);margin:12px}
+  }
+
+  @media (min-width: 641px){
+    .top-nav .nav{min-width:125px}
+  }
+
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<section id="loginScreen" class="min-h-screen flex items-center justify-center p-5">
+  <div class="glass rounded-3xl w-full max-w-md p-8">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-12 h-12 rounded-2xl bg-sky-500/15 border border-sky-400/20 flex items-center justify-center text-2xl">♠</div>
+      <div><h1 class="text-2xl font-black">Least Count</h1><p class="text-xs text-slate-400">Administrator Console</p></div>
+    </div>
+    <div class="mb-5"><label class="text-xs text-slate-400">Admin mobile / ID</label><input id="adminId" class="input mt-2" inputmode="numeric" autocomplete="username" value=""></div>
+    <div class="mb-5"><label class="text-xs text-slate-400">Password</label><input id="adminPassword" type="password" class="input mt-2" autocomplete="current-password"></div>
+    <button id="loginBtn" class="btn btn-primary w-full">Sign in to Admin Panel</button>
+    <p id="loginError" class="hidden text-sm text-red-400 mt-4 text-center"></p>
+    <p class="text-[11px] text-slate-500 mt-6 text-center">Admin access only</p>
+  </div>
+</section>
+
+<!-- APP -->
+<section id="app" class="hidden min-h-screen">
+<header class="sticky top-0 z-30 border-b border-slate-800 bg-[#07111f]/95 backdrop-blur">
+  <div class="max-w-[1500px] mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-sky-500/15 flex items-center justify-center">♠</div><div><div class="font-black">Least Count Admin</div><div class="text-[11px] text-slate-500">Wallet & deposit management</div></div></div>
+    <div class="flex items-center gap-2"><span class="pill bg-emerald-500/10 text-emerald-300">● Admin online</span><button id="logoutBtn" class="btn btn-muted text-xs">Logout</button></div>
+  </div>
+</header>
+
+<div class="max-w-[1500px] mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
+  <div class="block">
+    <aside class="w-full mb-4 sm:mb-5">
+      <div class="card p-2 top-nav">
+        <button class="nav btn nav-active w-full text-left mb-1" data-section="overview">▦ &nbsp; Overview</button>
+        <button class="nav btn btn-muted w-full text-left mb-1" data-section="requests">↗ &nbsp; Deposit Requests <span id="navRequestCount" class="float-right pill bg-amber-500/20 text-amber-300">0</span></button>
+        <button class="nav btn btn-muted w-full text-left mb-1" data-section="users">♙ &nbsp; Users & Wallets</button>
+        <button class="nav btn btn-muted w-full text-left mb-1" data-section="transactions">▤ &nbsp; Transactions</button>
+        <button class="nav btn btn-muted w-full text-left mb-1" data-section="profit-analytics">📊 &nbsp; Profit Analytics</button><button class="nav btn btn-muted w-full text-left mb-1" data-section="withdrawals">💸 &nbsp; Withdrawals <span id="navWithdrawCount" class="float-right pill bg-rose-500/20 text-rose-300">0</span></button>
+        <button class="nav btn btn-muted w-full text-left" data-section="settings">⚙ &nbsp; Settings</button>
+      </div>
+    </aside>
+
+    <main class="w-full min-w-0">
+      <!-- OVERVIEW -->
+      <div id="section-overview" class="section">
+        <div class="mb-6"><h2 class="text-2xl font-black">Dashboard Overview</h2><p class="text-sm text-slate-400 mt-1">Monitor wallets, deposits and recent activity.</p></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+          <div class="card p-5"><p class="text-xs text-slate-500">Total Users</p><p id="statUsers" class="text-3xl font-black mt-2">—</p><p id="statUsersDetail" class="text-[10px] text-slate-500 mt-1">Loading complete user list...</p></div>
+          <div class="card p-5"><p class="text-xs text-slate-500">Pending Requests</p><p id="statRequests" class="text-3xl font-black mt-2 text-amber-300">—</p></div>
+          <div class="card p-5"><p class="text-xs text-slate-500">Total Wallet Coins</p><p id="statCoins" class="text-3xl font-black mt-2 text-emerald-300">—</p></div>
+          <div class="card p-5"><p class="text-xs text-slate-500">Pending Withdrawals</p><p id="statWithdrawals" class="text-3xl font-black mt-2 text-rose-300">—</p></div>
+        </div>
+        <div class="grid xl:grid-cols-2 gap-5">
+          <div class="card p-5"><div class="flex justify-between items-center mb-4"><div><h3 class="font-black">Pending Deposits</h3><p class="text-xs text-slate-500">Requests waiting for admin action</p></div><button class="btn btn-muted text-xs" onclick="showSection('requests')">View all</button></div><div id="overviewRequests"></div></div>
+          <div class="card p-5"><div class="flex justify-between items-center mb-4"><div><h3 class="font-black">Recent Wallet Activity</h3><p class="text-xs text-slate-500">Every approved deposit and manual wallet change is recorded</p></div><button class="btn btn-muted text-xs" onclick="showSection('transactions')">View all</button></div><div id="overviewTransactions"></div></div>
+        </div>
+      </div>
+
+      <!-- REQUESTS -->
+      <div id="section-requests" class="section hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6"><div><h2 class="text-2xl font-black">Deposit Requests</h2><p class="text-sm text-slate-400 mt-1">Approve a request by adding the requested amount to the user's wallet.</p></div><button class="btn btn-muted" onclick="refreshAll()">↻ Refresh</button></div>
+        <div class="card p-4 mb-5 flex flex-col md:flex-row gap-3"><input id="requestSearch" class="input" placeholder="Search name, mobile or request amount..." oninput="renderRequests()"><select id="requestFilter" class="input md:w-48" onchange="renderRequests()"><option value="pending">Pending only</option><option value="all">All requests</option></select></div>
+        <div class="card table-wrap"><table><thead><tr><th>User</th><th>Mobile</th><th>UTR / Transaction ID</th><th>Amount</th><th>Wallet</th><th>Requested At</th><th>Status</th><th>Action</th></tr></thead><tbody id="requestsTable"></tbody></table></div>
+      </div>
+
+      <!-- USERS -->
+      <div id="section-users" class="section hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6"><div><h2 class="text-2xl font-black">Users & Wallets</h2><p id="usersCountText" class="text-sm text-slate-400 mt-1">Loading all registered users...</p></div><button class="btn btn-muted" onclick="refreshAll()">↻ Refresh</button></div>
+        <div class="card p-4 mb-5"><input id="userSearch" class="input" placeholder="Search by first name, last name or mobile / ID..." oninput="renderUsers()"></div>
+        <div class="card table-wrap"><table><thead><tr><th>User</th><th>Mobile</th><th>DEMO Wallet</th><th>REAL Wallet</th><th>Request</th><th>Wallet Actions</th></tr></thead><tbody id="usersTable"></tbody></table></div>
+      </div>
+
+      <!-- TRANSACTIONS -->
+      <div id="section-transactions" class="section hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6"><div><h2 class="text-2xl font-black">Wallet Transactions</h2><p class="text-sm text-slate-400 mt-1">Complete wallet audit trail — deposits, manual credits and game wallet changes.</p></div><button class="btn btn-muted" onclick="loadTransactions()">↻ Refresh</button></div>
+        <div id="ledgerWarning" class="hidden mb-5 rounded-xl border border-amber-500/20 bg-amber-500/5 text-amber-200 p-4 text-sm"></div>
+        <div class="card p-4 mb-5">
+          <div class="flex flex-col xl:flex-row xl:items-end gap-3">
+            <div class="flex-1">
+              <label class="text-[11px] uppercase tracking-wide text-slate-500">Search</label>
+              <input id="transactionSearch" class="input mt-1" placeholder="Search user, mobile, reference or description..." oninput="renderTransactions()">
+            </div>
+            <div class="w-full xl:w-52">
+              <label class="text-[11px] uppercase tracking-wide text-slate-500">Transaction Type</label>
+              <select id="transactionTypeFilter" class="input mt-1" onchange="renderTransactions()">
+                <option value="all">All transaction types</option>
+                <option value="admin_deposit">Admin Deposit</option>
+                <option value="DEPOSIT_CREDIT">Deposit Credit</option>
+                <option value="MANUAL_CREDIT">Manual Credit</option>
+                <option value="bet_entry">Bet Entry</option>
+                <option value="game_fee">Game Fee</option>
+                <option value="winner_payout">Winner Payout</option>
+                <option value="GAME_WIN">Game Win</option>
+                <option value="GAME_LOSS">Game Loss</option>
+                <option value="WITHDRAW_REQUEST">Withdrawal Request</option>
+                <option value="WITHDRAW_REFUND">Withdrawal Refund</option>
+                <option value="adjustment">Adjustment</option>
+              </select>
+            </div>
+            <div class="w-full xl:w-44">
+              <label class="text-[11px] uppercase tracking-wide text-slate-500">Date</label>
+              <select id="transactionDateFilter" class="input mt-1" onchange="renderTransactions()">
+                <option value="all">All dates</option>
+                <option value="today">Today</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="7days">Last 7 days</option>
+                <option value="30days">Last 30 days</option>
+              </select>
+            </div>
+            <div class="w-full xl:w-40">
+              <label class="text-[11px] uppercase tracking-wide text-slate-500">Amount</label>
+              <select id="transactionAmountFilter" class="input mt-1" onchange="renderTransactions()">
+                <option value="all">All amounts</option>
+                <option value="credit">Credits only</option>
+                <option value="debit">Debits only</option>
+              </select>
+            </div>
+            <button class="btn btn-muted xl:mb-0" onclick="clearTransactionFilters()">↺ Clear</button>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-800">
+            <div id="transactionFilterSummary" class="text-xs text-slate-500">Showing all transactions</div>
+            <div class="text-xs text-slate-500">Tip: use <span class="text-slate-300 font-semibold">Winner Payout</span> to quickly see player winnings.</div>
+          </div>
+        </div>
+        <div class="card table-wrap"><table><thead><tr><th>Date</th><th>User</th><th>Type</th><th>Amount</th><th>Before</th><th>After</th><th>Description</th><th>UTR / Reference</th></tr></thead><tbody id="transactionsTable"></tbody></table></div>
+      </div>
+
+      <!-- PROFIT ANALYTICS -->
+      <div id="section-profit-analytics" class="section hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <div>
+            <h2 class="text-2xl font-black">Profit Analytics</h2>
+            <p class="text-sm text-slate-400 mt-1">Track <b>REAL WALLET</b> game entry money, 5% house profit and winner payouts. BOT / DEMO games are excluded.</p>
+          </div>
+          <button class="btn btn-muted" onclick="renderProfitAnalytics()">↻ Recalculate</button>
+        </div>
+
+        <div class="card p-4 mb-5">
+          <div class="flex flex-col md:flex-row gap-3 md:items-end">
+            <div class="flex-1">
+              <label class="filter-label">Date Range</label>
+              <select id="profitDateFilter" class="input" onchange="renderProfitAnalytics()">
+                <option value="all">All time</option>
+                <option value="today">Today</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="7days">Last 7 days</option>
+                <option value="30days">Last 30 days</option>
+              </select>
+            </div>
+            <div class="flex-1">
+              <label class="filter-label">Game / User Search</label>
+              <input id="profitSearch" class="input" placeholder="Search game, user, room or reference..." oninput="renderProfitAnalytics()">
+            </div>
+            <button class="btn btn-muted" onclick="clearProfitFilters()">Clear</button>
+          </div>
+          <div id="profitFilterSummary" class="text-xs text-slate-500 mt-3"></div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+          <div class="card p-5"><p class="text-xs text-slate-500">Real Wallet Game Pot</p><p id="profitTotalEntry" class="text-3xl font-black mt-2 text-sky-300">₹0</p><p class="text-[10px] text-slate-500 mt-1">Actual pot from completed REAL WALLET games</p></div>
+          <div class="card p-5"><p class="text-xs text-slate-500">House Profit · 5%</p><p id="profitHouse" class="text-3xl font-black mt-2 text-emerald-300">₹0</p><p class="text-[10px] text-slate-500 mt-1">5% of the actual game pot</p></div>
+          <div class="card p-5"><p class="text-xs text-slate-500">Winner Payout</p><p id="profitWinnerPayout" class="text-3xl font-black mt-2 text-amber-300">₹0</p><p class="text-[10px] text-slate-500 mt-1">Actual winner amount (pot − 5% house)</p></div>
+          <div class="card p-5"><p class="text-xs text-slate-500">Net Recorded Profit</p><p id="profitNet" class="text-3xl font-black mt-2 text-violet-300">₹0</p><p class="text-[10px] text-slate-500 mt-1">Net house profit from REAL WALLET games</p></div>
+        </div>
+
+        <div class="card p-5 mb-5">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+            <div>
+              <h3 class="font-black">Game Profit Breakdown</h3>
+              <p class="text-xs text-slate-500 mt-1">Each row is one REAL WALLET game. Pot comes from the saved game bet amount × actual real players. BOT / DEMO games are excluded.</p>
+            </div>
+            <div class="text-xs text-slate-500">House share is calculated as <b class="text-emerald-300">5% of total entry</b>.</div>
+          </div>
+          <div class="table-wrap"><table><thead><tr><th>Game / Reference</th><th>Date</th><th>Players</th><th>Bet / Player</th><th>Pot</th><th>House 5%</th><th>Winner</th><th>Winner Gets</th><th>Net Profit</th></tr></thead><tbody id="profitGamesTable"></tbody></table></div>
+        </div>
+
+        <div class="grid xl:grid-cols-2 gap-5">
+          <div class="card p-5">
+            <h3 class="font-black mb-1">Profit by Day</h3>
+            <p class="text-xs text-slate-500 mb-4">Daily REAL WALLET game entry and house profit summary. BOT / DEMO games are excluded.</p>
+            <div class="table-wrap"><table><thead><tr><th>Date</th><th>Games</th><th>Entry</th><th>House Profit</th></tr></thead><tbody id="profitDailyTable"></tbody></table></div>
+          </div>
+          <div class="card p-5">
+            <h3 class="font-black mb-1">Profit Calculation</h3>
+            <p class="text-xs text-slate-500 mb-4">Simple view of how the dashboard calculates the house amount.</p>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between gap-4"><span class="text-slate-400">Real wallet game pot</span><b id="profitCalcEntry">₹0</b></div>
+              <div class="flex justify-between gap-4"><span class="text-slate-400">House rate</span><b>5%</b></div>
+              <div class="flex justify-between gap-4"><span class="text-slate-400">Expected house profit</span><b id="profitCalcHouse" class="text-emerald-300">₹0</b></div>
+              <div class="flex justify-between gap-4"><span class="text-slate-400">Winner payout</span><b id="profitCalcPayout" class="text-amber-300">₹0</b></div>
+              <div class="border-t border-slate-800 pt-3 flex justify-between gap-4"><span class="font-black">Net profit</span><b id="profitCalcNet" class="text-violet-300">₹0</b></div>
+              <div class="rounded-xl bg-slate-900 p-4 text-xs text-slate-400 leading-5">Example: 2 players × ₹10 = ₹20 pot → ₹1 house → ₹19 winner. 3 players × ₹20 = ₹60 pot → ₹3 house → ₹57 winner.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WITHDRAWALS -->
+      <div id="section-withdrawals" class="section hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6"><div><h2 class="text-2xl font-black">Withdrawal Requests</h2><p class="text-sm text-slate-400 mt-1">Approve or reject wallet withdrawal requests.</p></div><button class="btn btn-muted" onclick="refreshAll()">↻ Refresh</button></div>
+        <div class="card p-4 mb-5 flex flex-col md:flex-row gap-3"><input id="withdrawSearch" class="input" placeholder="Search name, mobile, UPI or request ID..." oninput="renderWithdrawals()"><select id="withdrawFilter" class="input md:w-48" onchange="renderWithdrawals()"><option value="pending">Pending only</option><option value="all">All requests</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></div>
+        <div class="card table-wrap"><table><thead><tr><th>User</th><th>Mobile</th><th>Amount</th><th>UPI ID</th><th>Requested At</th><th>Status</th><th>Action</th></tr></thead><tbody id="withdrawalsTable"></tbody></table></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div id="section-settings" class="section hidden">
+        <div class="mb-6"><h2 class="text-2xl font-black">Settings</h2><p class="text-sm text-slate-400 mt-1">Connection and dashboard information.</p></div>
+        <div class="card p-5 space-y-4 text-sm"><div><span class="text-slate-500">Supabase project</span><div class="font-mono mt-1 break-all">hmfeeaejffcbqyihshre.supabase.co</div></div><div><span class="text-slate-500">Primary user table</span><div class="font-mono mt-1">public.least_count_players</div></div><div><span class="text-slate-500">Request flag</span><div class="font-mono mt-1">coin_request = yes (current player table)</div></div><div class="rounded-xl bg-slate-900 p-4 text-amber-200 text-xs leading-5">For production, do not rely on credentials hardcoded in HTML. A proper Supabase admin RPC / Edge Function with server-side authentication should be used for wallet credits.</div></div>
+      </div>
+    </main>
+  </div>
+</div>
+</section>
+
+<!-- CREDIT / REQUEST MODAL -->
+<div id="creditModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm items-center justify-center p-4">
+ <div class="glass rounded-2xl w-full max-w-lg p-6 max-h-[92vh] overflow-y-auto">
+  <div class="flex justify-between items-start gap-3"><div><div id="creditModeBadge" class="pill bg-amber-500/10 text-amber-300 mb-2">DEPOSIT REQUEST</div><h3 id="creditModalTitle" class="text-xl font-black">Verify Deposit</h3><p id="creditUserName" class="text-sm text-slate-400 mt-1"></p></div><button class="text-slate-400 text-xl" onclick="closeCredit()">×</button></div>
+  <div id="requestDetails" class="grid grid-cols-2 gap-3 mt-5">
+   <div class="rounded-xl bg-slate-900 p-4"><div class="text-[11px] text-slate-500">Request Amount</div><div id="creditRequested" class="text-xl font-black mt-1 text-amber-300">—</div></div>
+   <div class="rounded-xl bg-slate-900 p-4"><div class="text-[11px] text-slate-500">Current Wallet</div><div id="creditCurrent" class="text-xl font-black mt-1 text-emerald-300">0</div></div>
+   <div class="rounded-xl bg-slate-900 p-4 col-span-2"><div class="text-[11px] text-slate-500">UTR / Transaction ID</div><div id="creditUtr" class="font-mono text-sm font-bold mt-1 text-white break-all">—</div></div>
+   <div class="rounded-xl bg-slate-900 p-4"><div class="text-[11px] text-slate-500">Request ID</div><div id="creditRequestId" class="font-mono text-[10px] mt-1 text-slate-300 break-all">—</div></div>
+   <div class="rounded-xl bg-slate-900 p-4"><div class="text-[11px] text-slate-500">Submitted</div><div id="creditCreatedAt" class="text-xs mt-1 text-slate-300">—</div></div>
+  </div>
+  <label class="text-xs text-slate-400 block mt-5">Amount to credit <span class="text-amber-300">(editable before approval)</span></label><input id="creditAmount" type="number" min="1" step="0.01" class="input mt-2" placeholder="Enter amount">
+  <label class="text-xs text-slate-400 block mt-4">Admin note</label><input id="creditNote" class="input mt-2" placeholder="e.g. UTR verified — deposit approved">
+  <div class="flex gap-2 mt-5"><button class="btn btn-muted flex-1" onclick="closeCredit()">Cancel</button><button id="rejectRequestBtn" class="btn btn-red flex-1">Reject</button><button id="confirmCreditBtn" class="btn btn-green flex-1">Verify & Credit</button></div>
+  <p id="creditError" class="hidden text-xs text-red-400 mt-3"></p>
+ </div>
+</div>
+
+<!-- WALLET BALANCE EDIT MODAL -->
+<div id="walletEditModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm items-center justify-center p-4">
+ <div class="glass rounded-2xl w-full max-w-lg p-6">
+  <div class="flex justify-between items-start gap-3">
+   <div><div class="pill bg-violet-500/10 text-violet-300 mb-2">ADMIN BALANCE EDIT</div><h3 class="text-xl font-black">Update Wallet Balance</h3><p id="walletEditUserName" class="text-sm text-slate-400 mt-1"></p></div>
+   <button class="text-slate-400 text-xl" onclick="closeWalletEdit()">×</button>
+  </div>
+  <div class="grid grid-cols-2 gap-3 mt-5">
+   <div class="rounded-xl bg-slate-900 p-4"><div class="text-[11px] text-slate-500">Current Balance</div><div id="walletEditCurrent" class="text-xl font-black mt-1 text-amber-300">₹0</div></div>
+   <div class="rounded-xl bg-slate-900 p-4"><div class="text-[11px] text-slate-500">Difference</div><div id="walletEditDifference" class="text-xl font-black mt-1 text-slate-300">₹0</div></div>
+  </div>
+  <label class="text-xs text-slate-400 block mt-5">Wallet</label>
+  <select id="walletEditType" class="input mt-2" onchange="updateWalletEditDifference()">
+   <option value="demo">DEMO / BOT Wallet</option>
+   <option value="real">REAL Wallet</option>
+  </select>
+  <label class="text-xs text-slate-400 block mt-4">New exact balance</label>
+  <input id="walletEditAmount" type="number" min="0" step="0.01" class="input mt-2" placeholder="Example: 250" oninput="updateWalletEditDifference()">
+  <p class="text-[11px] text-slate-500 mt-2">This sets the wallet to the exact amount. It does not add the amount again. The difference is saved in the transaction ledger.</p>
+  <label class="text-xs text-slate-400 block mt-4">Admin note</label>
+  <input id="walletEditNote" class="input mt-2" placeholder="Example: Corrected balance entered by mistake">
+  <div class="flex gap-2 mt-5"><button class="btn btn-muted flex-1" onclick="closeWalletEdit()">Cancel</button><button id="saveWalletEditBtn" class="btn btn-primary flex-1" onclick="saveWalletEdit()">Update Balance</button></div>
+  <p id="walletEditError" class="hidden text-xs text-red-400 mt-3"></p>
+ </div>
+</div>
+
+<div id="toast" class="hidden fixed right-4 bottom-4 z-[60] rounded-xl px-4 py-3 text-sm font-bold shadow-2xl"></div>
+
+<script>
+const SUPABASE_BASE_URL='https://hmfeeaejffcbqyihshre.supabase.co';
+const SUPABASE_APIKEY='sb_publishable_8FANdKPFeAUoNKll-Gcldg_xtMTO5ND';
+const ADMIN_ID='9912517895';
+const ADMIN_PASSWORD='11223344';
+const RPC_URL=`${SUPABASE_BASE_URL}/rest/v1/rpc/`;
+const GAME_HISTORY_URL=`${SUPABASE_BASE_URL}/rest/v1/least_count_game_history`;
+let gameHistoryRows=[];
+let users=[], requests=[], transactions=[], withdrawals=[], selectedUser=null, selectedRequest=null, creditMode='request';
+const headers=()=>({'apikey':SUPABASE_APIKEY,'Authorization':`Bearer ${SUPABASE_APIKEY}`,'Content-Type':'application/json'});
+async function rpc(name,params={}){
+  const response=await fetch(`${RPC_URL}${encodeURIComponent(name)}`,{method:'POST',headers:headers(),body:JSON.stringify(params)});
+  const raw=await response.text();
+  let data=null;
+  try{data=raw?JSON.parse(raw):null}catch(e){data=raw}
+  if(!response.ok){
+    const message=(data&&typeof data==='object'&&(data.message||data.error||data.hint||data.details))||raw||`RPC ${name} failed (${response.status})`;
+    throw new Error(String(message));
+  }
+  return data;
+}
+function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function money(v){return Number(v||0).toLocaleString('en-IN',{maximumFractionDigits:2});}
+function dt(v){return v?v===null?'—':new Date(v).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}):'—';}
+function showToast(msg,good=true){const t=document.getElementById('toast');t.textContent=msg;t.className=`fixed right-4 bottom-4 z-[60] rounded-xl px-4 py-3 text-sm font-bold shadow-2xl toast ${good?'bg-emerald-500 text-white':'bg-red-500 text-white'}`;setTimeout(()=>t.classList.add('hidden'),3500)}
+function getName(u){return String(u.name||u.username||`${u.firstname||''} ${u.lastname||''}`).trim()||'Unnamed User'}
+function getUserId(u){return u.id??u.user_id??''}
+function getMobile(u){return String(u.mobile||u.phone||u.mobilenumber||u.mobile_number||'—')}
+async function fetchUsers(){
+  const data=await rpc('admin_get_least_count_users_json',{p_admin_id:ADMIN_ID,p_admin_password:ADMIN_PASSWORD});
+  let parsed=data;
+  if(typeof parsed==='string'){try{parsed=JSON.parse(parsed)}catch(e){parsed=[]}}
+  users=Array.isArray(parsed)?parsed:[];
+}
+async function fetchRequests(){requests=await rpc('admin_get_least_count_deposit_requests',{p_admin_id:ADMIN_ID,p_admin_password:ADMIN_PASSWORD,p_status:'all'});if(!Array.isArray(requests))requests=[]}
+async function loadTransactions(){transactions=await rpc('admin_get_least_count_wallet_transactions',{p_admin_id:ADMIN_ID,p_admin_password:ADMIN_PASSWORD});if(!Array.isArray(transactions))transactions=[];await fetchRealGameHistory();document.getElementById('ledgerWarning').classList.add('hidden');renderTransactions();renderOverviewTransactions();if(document.getElementById('section-profit-analytics')&&!document.getElementById('section-profit-analytics').classList.contains('hidden'))renderProfitAnalytics()}
+async function fetchWithdrawals(){withdrawals=await rpc('admin_get_least_count_withdraw_requests',{p_admin_id:ADMIN_ID,p_admin_password:ADMIN_PASSWORD,p_status:'all'});if(!Array.isArray(withdrawals))withdrawals=[];renderWithdrawals();}
+function renderWithdrawals(){const q=(document.getElementById('withdrawSearch')?.value||'').toLowerCase(),f=document.getElementById('withdrawFilter')?.value||'pending',tb=document.getElementById('withdrawalsTable');if(!tb)return;const rows=withdrawals.filter(r=>(f==='all'||r.status===f)&&`${r.username||''} ${r.mobile||''} ${r.upi_id||''} ${r.id||''}`.toLowerCase().includes(q));if(!rows.length){tb.innerHTML='<tr><td colspan="7" class="text-center text-slate-500 py-12">No matching withdrawal requests.</td></tr>';return}tb.innerHTML=rows.map(r=>{const s=String(r.status||'').toLowerCase();const a=s==='pending'?`<div class="flex gap-2"><button class="btn btn-green text-xs" onclick="processWithdrawal('${esc(String(r.id))}','approve')">Approve</button><button class="btn btn-red text-xs" onclick="processWithdrawal('${esc(String(r.id))}','reject')">Reject</button></div>`:'<span class="text-slate-600 text-xs">Completed</span>';return `<tr><td><div class="font-bold">${esc(r.username||'—')}</div><div class="text-[10px] text-slate-500">${esc(r.id||'')}</div></td><td>${esc(r.mobile||'—')}</td><td class="font-black text-amber-300">₹${money(r.amount)}</td><td class="font-mono text-sky-300">${esc(r.upi_id||'—')}</td><td>${dt(r.created_at)}</td><td><span class="pill ${s==='pending'?'bg-amber-500/10 text-amber-300':s==='approved'?'bg-emerald-500/10 text-emerald-300':'bg-rose-500/10 text-rose-300'}">${esc(s.toUpperCase())}</span></td><td>${a}</td></tr>`}).join('')}
+async function processWithdrawal(id,action){const r=withdrawals.find(x=>String(x.id)===String(id));if(!r)return;if(!confirm(`${action==='approve'?'Approve':'Reject and refund'} ₹${money(r.amount)} for ${r.username||'this user'}?`))return;try{const data=await rpc(action==='approve'?'admin_approve_least_count_withdraw_request':'admin_reject_least_count_withdraw_request',{p_admin_id:ADMIN_ID,p_admin_password:ADMIN_PASSWORD,p_request_id:id,p_admin_note:action==='approve'?'Withdrawal approved':'Withdrawal rejected and refunded'});const o=Array.isArray(data)?data[0]:data;showToast(o?.message||'Withdrawal processed');await refreshAll();}catch(e){showToast(e.message||'Unable to process withdrawal',false)}}
+async function refreshAll(){
+  const errors=[];
+  for(const [label,fn] of [['Users',fetchUsers],['Deposit requests',fetchRequests],['Transactions',loadTransactions],['Withdrawals',fetchWithdrawals]]){
+    try{await fn()}catch(e){errors.push(`${label}: ${e.message}`);console.error(label,e);}
+  }
+  renderAll();
+  document.getElementById('statRefresh').textContent=new Date().toLocaleString('en-IN');
+  if(errors.length) showToast(errors.join(' | '),false); else showToast('Dashboard refreshed');
+}
+function renderAll(){const pending=requests.filter(r=>r.status==='pending'),pw=withdrawals.filter(r=>r.status==='pending');document.getElementById('statUsers').textContent=users.length.toLocaleString('en-IN');document.getElementById('statUsersDetail').textContent=`Complete user list loaded: ${users.length.toLocaleString('en-IN')}`;document.getElementById('usersCountText').textContent=`${users.length.toLocaleString('en-IN')} registered users loaded from Supabase`;document.getElementById('statRequests').textContent=pending.length;document.getElementById('statCoins').textContent=money(users.reduce((s,u)=>s+Number(u.bot_coins??0),0));document.getElementById('navRequestCount').textContent=pending.length;document.getElementById('statWithdrawals').textContent=pw.length;document.getElementById('navWithdrawCount').textContent=pw.length;renderRequests();renderUsers();renderOverviewRequests();renderOverviewTransactions();renderWithdrawals()}
+function renderOverviewRequests(){const el=document.getElementById('overviewRequests');const rows=requests.filter(r=>r.status==='pending').slice(0,6);if(!rows.length){el.innerHTML='<div class="text-sm text-slate-500 py-6">No pending deposit requests.</div>';return}el.innerHTML=rows.map(r=>`<div class="flex items-center justify-between gap-3 py-3 border-b border-slate-800 last:border-0"><div class="min-w-0"><div class="font-bold text-sm">${esc(r.username)}</div><div class="text-[11px] text-slate-500">${money(r.amount)} · UTR ${esc(r.utr)}</div></div><button class="btn btn-green text-xs shrink-0" onclick="openRequest('${r.id}')">Verify</button></div>`).join('')}
+function renderOverviewTransactions(){const el=document.getElementById('overviewTransactions');if(!transactions.length){el.innerHTML='<div class="text-sm text-slate-500 py-6">No wallet transactions yet.</div>';return}el.innerHTML=transactions.slice(0,6).map(t=>`<div class="flex items-center justify-between py-3 border-b border-slate-800 last:border-0"><div class="min-w-0"><div class="font-bold text-sm">${esc(t.username||t.user_id)} · ${esc(t.transaction_type)}</div><div class="text-[11px] text-slate-500">${dt(t.created_at)}</div></div><div class="font-black ${Number(t.amount)>=0?'text-emerald-300':'text-red-300'}">${Number(t.amount)>=0?'+':''}${money(t.amount)}</div></div>`).join('')}
+function renderRequests(){const q=(document.getElementById('requestSearch')?.value||'').toLowerCase();const filter=document.getElementById('requestFilter')?.value||'pending';const rows=requests.filter(r=>(filter==='all'||r.status===filter)&&`${r.username} ${r.mobile||''} ${r.utr} ${r.id} ${r.amount}`.toLowerCase().includes(q));const tb=document.getElementById('requestsTable');if(!rows.length){tb.innerHTML='<tr><td colspan="9" class="text-center text-slate-500 py-12">No matching deposit requests.</td></tr>';return}tb.innerHTML=rows.map(r=>`<tr><td><div class="font-bold">${esc(r.username)}</div><div class="text-[10px] text-slate-500">User ID ${esc(r.user_id)}</div></td><td>${esc(r.mobile||'—')}</td><td><div class="font-mono font-bold text-sky-300">${esc(r.utr)}</div><div class="text-[9px] text-slate-600">${esc(r.id)}</div></td><td class="font-black text-amber-300">₹${money(r.amount)}</td><td class="font-bold">₹${money(r.current_coins)}</td><td class="text-xs text-slate-400">${dt(r.created_at)}</td><td>${r.status==='pending'?'<span class="pill bg-amber-500/10 text-amber-300">PENDING</span>':r.status==='approved'?'<span class="pill bg-emerald-500/10 text-emerald-300">APPROVED</span>':'<span class="pill bg-red-500/10 text-red-300">REJECTED</span>'}</td><td>${r.status==='pending'?`<div class="flex flex-wrap gap-2"><button class="btn btn-muted text-xs" onclick="openDepositAmountEdit('${r.id}')">✎ Edit Amount</button><button class="btn btn-green text-xs" onclick="openRequest('${r.id}')">Verify & Credit</button></div>`:'<span class="text-xs text-slate-600">Completed</span>'}</td></tr>`).join('')}
+function renderUsers(){const q=(document.getElementById('userSearch')?.value||'').toLowerCase();const rows=users.filter(u=>`${getName(u)} ${getMobile(u)}`.toLowerCase().includes(q));const tb=document.getElementById('usersTable');if(!rows.length){tb.innerHTML='<tr><td colspan="6" class="text-center text-slate-500 py-12">No users found.</td></tr>';return}tb.innerHTML=rows.map(u=>`<tr><td><div class="font-bold">${esc(getName(u))}</div><div class="text-[10px] text-slate-500">${esc(String(getUserId(u)))}</div></td><td>${esc(getMobile(u))}</td><td class="font-black text-amber-300">₹${money(u.bot_coins??0)}</td><td class="font-black text-sky-300">₹${money(u.real_coins??0)}</td><td>${String(u.coin_request).toLowerCase()==='yes'?'<span class="pill bg-amber-500/10 text-amber-300">YES</span>':'<span class="pill bg-slate-800 text-slate-500">NO</span>'}</td><td><div class="flex flex-wrap gap-2"><button class="btn btn-primary text-xs" onclick="openWalletEdit('${esc(String(getUserId(u)))}')">✎ Update Wallet</button><button class="btn btn-green text-xs" onclick="openManualCredit('${esc(String(getUserId(u)))}')">+ Add Coins</button></div></td></tr>`).join('')}
+function renderTransactions(){
+  const tb=document.getElementById('transactionsTable');
+  const q=(document.getElementById('transactionSearch')?.value||'').trim().toLowerCase();
+  const type=(document.getElementById('transactionTypeFilter')?.value||'all');
+  const dateFilter=(document.getElementById('transactionDateFilter')?.value||'all');
+  const amountFilter=(document.getElementById('transactionAmountFilter')?.value||'all');
+
+  const now=new Date();
+  const startOfToday=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const startOfYesterday=new Date(startOfToday); startOfYesterday.setDate(startOfYesterday.getDate()-1);
+  const start7=new Date(startOfToday); start7.setDate(start7.getDate()-6);
+  const start30=new Date(startOfToday); start30.setDate(start30.getDate()-29);
+
+  const rows=transactions.filter(t=>{
+    const amount=Number(t.amount||0);
+    const haystack=`${t.username||''} ${t.mobile||''} ${t.user_id||''} ${t.transaction_type||''} ${t.description||''} ${t.reference||''} ${t.metadata?.utr||''}`.toLowerCase();
+    if(q && !haystack.includes(q)) return false;
+    if(type!=='all' && String(t.transaction_type||'')!==type) return false;
+    if(amountFilter==='credit' && amount<0) return false;
+    if(amountFilter==='debit' && amount>=0) return false;
+
+    if(dateFilter!=='all'){
+      const d=new Date(t.created_at);
+      if(Number.isNaN(d.getTime())) return false;
+      if(dateFilter==='today' && d<startOfToday) return false;
+      if(dateFilter==='yesterday' && (d<startOfYesterday || d>=startOfToday)) return false;
+      if(dateFilter==='7days' && d<start7) return false;
+      if(dateFilter==='30days' && d<start30) return false;
+    }
+    return true;
+  });
+
+  const summary=document.getElementById('transactionFilterSummary');
+  if(summary){
+    const total=transactions.length;
+    summary.textContent=`Showing ${rows.length.toLocaleString('en-IN')} of ${total.toLocaleString('en-IN')} transactions`;
+  }
+
+  if(!rows.length){
+    tb.innerHTML='<tr><td colspan="9" class="text-center text-slate-500 py-12">No transactions match the selected filters.</td></tr>';
+    return;
+  }
+
+  tb.innerHTML=rows.map(t=>`<tr>
+    <td>${dt(t.created_at)}</td>
+    <td><div class="font-bold">${esc(t.username||'—')}</div><div class="text-[10px] text-slate-500">${esc(t.user_id)}</div></td>
+    <td><span class="pill bg-slate-800 text-slate-300">${esc(t.transaction_type||'—')}</span></td>
+    <td class="font-black ${Number(t.amount)>=0?'text-emerald-300':'text-red-300'}">${Number(t.amount)>=0?'+':''}₹${money(t.amount)}</td>
+    <td>₹${money(t.balance_before)}</td>
+    <td>₹${money(t.balance_after)}</td>
+    <td>${esc(t.description||'—')}</td>
+    <td><div class="font-mono text-xs">${esc(t.reference||'—')}</div>${t.metadata?.utr?`<div class="text-[10px] text-sky-300">UTR: ${esc(t.metadata.utr)}</div>`:''}</td>
+  </tr>`).join('');
+}
+
+function clearTransactionFilters(){
+  ['transactionSearch','transactionTypeFilter','transactionDateFilter','transactionAmountFilter'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    if(el.tagName==='SELECT') el.selectedIndex=0;
+    else el.value='';
+  });
+  renderTransactions();
+}
+function getProfitDateStart(mode){
+  const now=new Date();
+  const start=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  if(mode==='today')return start;
+  if(mode==='yesterday')return new Date(start.getTime()-86400000);
+  if(mode==='7days')return new Date(start.getTime()-6*86400000);
+  if(mode==='30days')return new Date(start.getTime()-29*86400000);
+  return null;
+}
+function profitDateMatches(value,mode){
+  if(mode==='all')return true;
+  const d=new Date(value); if(Number.isNaN(d.getTime()))return false;
+  const start=getProfitDateStart(mode); const today=new Date();
+  const todayStart=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+  if(mode==='yesterday')return d>=start&&d<todayStart;
+  return d>=start;
+}
+function getTransactionGameKey(t){
+  const m=t?.metadata&&typeof t.metadata==='object'?t.metadata:{};
+  return String(m.game_id||m.gameId||m.game_key||m.gameKey||m.room_game_id||m.roomGameId||t.game_id||t.gameId||'').trim();
+}
+function getTransactionRoomCode(t){
+  const m=t?.metadata&&typeof t.metadata==='object'?t.metadata:{};
+  return String(m.game_code||m.room_code||m.roomCode||m.gameCode||t.game_code||t.room_code||'').trim().toUpperCase();
+}
+function getTransactionSearchText(t){
+  const m=t?.metadata&&typeof t.metadata==='object'?t.metadata:{};
+  return `${t.username||''} ${t.user_id||''} ${t.transaction_type||''} ${t.description||''} ${t.reference||''} ${m.game_key||''} ${m.game_id||''} ${m.game_code||''} ${m.room_code||''}`.toLowerCase();
+}
+function isRealWalletGameTransaction(t){
+  const type=String(t?.transaction_type||'').trim().toLowerCase();
+  const metadata=t?.metadata&&typeof t.metadata==='object'?t.metadata:{};
+  const wallet=String(metadata.wallet||metadata.wallet_type||metadata.walletType||'').trim().toLowerCase();
+  const source=String(metadata.source||'').trim().toLowerCase();
+  if(source==='demo_game'||wallet==='demo'||wallet==='bot') return false;
+  // REAL analytics is based on the actual REAL-wallet settlement rows.
+  return wallet==='real' && (type==='game_win'||type==='game_loss'||type==='bet_entry'||type==='winner_payout'||type==='game_fee');
+}
+async function fetchRealGameHistory(){
+  try{
+    const response=await fetch(`${GAME_HISTORY_URL}?select=*&order=created_at.desc`,{headers:{'apikey':SUPABASE_APIKEY,'Authorization':`Bearer ${SUPABASE_APIKEY}`,'Content-Type':'application/json'}});
+    if(!response.ok) throw new Error(`Game history request failed: ${response.status}`);
+    const rows=await response.json();
+    gameHistoryRows=Array.isArray(rows)?rows:[];
+  }catch(error){
+    console.error('Game history load failed:',error);
+    gameHistoryRows=[];
+  }
+}
+function parseGameHistoryBlocks(){
+  const out=[];
+  const re=/GAME\s+(\d+)\s*\n[\s\S]*?Game Code:\s*([^\n]+)\n[\s\S]*?Players:\s*([^\n]*)\n[\s\S]*?Bet:\s*(?:₹\s*)?([0-9]+(?:\.[0-9]+)?)\s*\n[\s\S]*?Completed At:\s*([^\n]+)\n[\s\S]*?Winner:\s*([^\n]+)\n/g;
+  for(const row of gameHistoryRows){
+    const text=String(row?.game_history||'');
+    if(!text || text.includes('GAME_ROOM_STATE:')) continue;
+    let m;
+    while((m=re.exec(text))!==null){
+      const bet=Number(m[4]);
+      const completedAt=new Date(String(m[5]).trim());
+      out.push({
+        rowId:row.id,
+        gameNumber:Number(m[1]),
+        roomCode:String(m[2]).trim().toUpperCase(),
+        players:String(m[3]).split(',').map(x=>x.trim()).filter(Boolean),
+        betAmount:Number.isFinite(bet)?bet:0,
+        completedAt:Number.isNaN(completedAt.getTime())?null:completedAt,
+        winner:String(m[6]).trim()
+      });
+    }
+  }
+  return out;
+}
+function getRealGameGroups(rows){
+  const groups=new Map();
+  rows.filter(isRealWalletGameTransaction).forEach(t=>{
+    const key=getTransactionGameKey(t);
+    if(!key) return;
+    if(!groups.has(key)) groups.set(key,{key,date:t.created_at,roomCode:getTransactionRoomCode(t),players:new Set(),rows:[]});
+    const g=groups.get(key);
+    g.rows.push(t);
+    if(!g.date||new Date(t.created_at)<new Date(g.date)) g.date=t.created_at;
+    if(t.user_id) g.players.add(String(t.user_id));
+    const room=getTransactionRoomCode(t); if(room && !g.roomCode) g.roomCode=room;
+  });
+  return [...groups.values()].sort((a,b)=>new Date(a.date)-new Date(b.date));
+}
+function matchHistoryToRealGame(group, history){
+  const candidates=history.filter(h=>h.betAmount>0 && (!group.roomCode || h.roomCode===group.roomCode));
+  if(!candidates.length) return null;
+  const txTime=new Date(group.date).getTime();
+  candidates.sort((a,b)=>{
+    const at=a.completedAt?Math.abs(a.completedAt.getTime()-txTime):Number.MAX_SAFE_INTEGER;
+    const bt=b.completedAt?Math.abs(b.completedAt.getTime()-txTime):Number.MAX_SAFE_INTEGER;
+    return at-bt;
+  });
+  return candidates[0]||null;
+}
+function getGameProfitRows(rows){
+  const history=parseGameHistoryBlocks();
+  const groups=getRealGameGroups(rows);
+  const used=new Set();
+  const games=[];
+  groups.forEach(g=>{
+    const h=matchHistoryToRealGame(g,history.filter(x=>!used.has(`${x.rowId}:${x.gameNumber}`)));
+    if(!h) return; // Never invent a bet amount from the old ₹100 settlement rows.
+    used.add(`${h.rowId}:${h.gameNumber}`);
+    const playerCount=Math.max(g.players.size,Number(h.players?.length||0));
+    const betPerPlayer=Number(h.betAmount||0);
+    if(!(betPerPlayer>0) || playerCount<2) return;
+    const pot=betPerPlayer*playerCount;
+    const house=Math.round(pot*0.05*100)/100;
+    const payout=Math.round((pot-house)*100)/100;
+    games.push({
+      key:g.key,
+      roomCode:g.roomCode||h.roomCode,
+      date:h.completedAt||new Date(g.date),
+      players:playerCount,
+      betPerPlayer,
+      pot,
+      house,
+      payout,
+      net:house,
+      winner:h.winner||'—'
+    });
+  });
+  return games.sort((a,b)=>new Date(b.date)-new Date(a.date));
+}
+function renderProfitAnalytics(){
+  const mode=document.getElementById('profitDateFilter')?.value||'all';
+  const q=(document.getElementById('profitSearch')?.value||'').trim().toLowerCase();
+  const rows=transactions.filter(t=>profitDateMatches(t.created_at,mode)&&(!q||getTransactionSearchText(t).includes(q)));
+  const games=getGameProfitRows(rows);
+  const totalPot=games.reduce((s,g)=>s+g.pot,0);
+  const totalHouse=games.reduce((s,g)=>s+g.house,0);
+  const totalPayout=games.reduce((s,g)=>s+g.payout,0);
+  const totalNet=games.reduce((s,g)=>s+g.net,0);
+  document.getElementById('profitTotalEntry').textContent='₹'+money(totalPot);
+  document.getElementById('profitHouse').textContent='₹'+money(totalHouse);
+  document.getElementById('profitWinnerPayout').textContent='₹'+money(totalPayout);
+  document.getElementById('profitNet').textContent='₹'+money(totalNet);
+  document.getElementById('profitCalcEntry').textContent='₹'+money(totalPot);
+  document.getElementById('profitCalcHouse').textContent='₹'+money(totalHouse);
+  document.getElementById('profitCalcPayout').textContent='₹'+money(totalPayout);
+  document.getElementById('profitCalcNet').textContent='₹'+money(totalNet);
+  const summary=document.getElementById('profitFilterSummary');
+  summary.textContent=`${games.length.toLocaleString('en-IN')} REAL WALLET game(s) found. BOT / DEMO games excluded. Pot is calculated from the actual game's saved bet amount and real players.`;
+  const tb=document.getElementById('profitGamesTable');
+  if(!games.length){tb.innerHTML='<tr><td colspan="9" class="text-center text-slate-500 py-12">No matching REAL WALLET games with saved bet/pot information were found.</td></tr>';}else{
+    tb.innerHTML=games.map(g=>`<tr><td><div class="font-bold text-sky-300">${esc(g.key)}</div><div class="text-[10px] text-slate-500">Room ${esc(g.roomCode||'—')}</div></td><td>${dt(g.date)}</td><td class="font-bold">${g.players}</td><td>₹${money(g.betPerPlayer)}</td><td class="font-black">₹${money(g.pot)}</td><td class="font-black text-emerald-300">₹${money(g.house)}</td><td class="font-bold text-white">${esc(g.winner||'—')}</td><td class="font-black text-amber-300">₹${money(g.payout)}</td><td class="font-black text-violet-300">₹${money(g.net)}</td></tr>`).join('');
+  }
+  const daily=new Map();games.forEach(g=>{const d=new Date(g.date);const key=Number.isNaN(d.getTime())?'Unknown':d.toLocaleDateString('en-CA');if(!daily.has(key))daily.set(key,{games:0,pot:0,house:0});const x=daily.get(key);x.games++;x.pot+=g.pot;x.house+=g.house;});
+  const db=document.getElementById('profitDailyTable');const dailyRows=[...daily.entries()].sort((a,b)=>b[0].localeCompare(a[0]));
+  if(!dailyRows.length)db.innerHTML='<tr><td colspan="4" class="text-center text-slate-500 py-8">No daily profit data.</td></tr>';else db.innerHTML=dailyRows.map(([day,x])=>`<tr><td class="font-bold">${day==='Unknown'?'Unknown':new Date(day+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</td><td>${x.games}</td><td>₹${money(x.pot)}</td><td class="font-black text-emerald-300">₹${money(x.house)}</td></tr>`).join('');
+}
+function clearProfitFilters(){document.getElementById('profitDateFilter').value='all';document.getElementById('profitSearch').value='';renderProfitAnalytics();}
+function showSection(name){document.querySelectorAll('.section').forEach(x=>x.classList.add('hidden'));document.getElementById(`section-${name}`).classList.remove('hidden');document.querySelectorAll('.nav').forEach(b=>{b.classList.remove('nav-active');b.classList.add('btn-muted');if(b.dataset.section===name){b.classList.add('nav-active');b.classList.remove('btn-muted')}});if(name==='transactions')loadTransactions();if(name==='profit-analytics'){loadTransactions().then(()=>renderProfitAnalytics()).catch(()=>renderProfitAnalytics());}if(name==='withdrawals')fetchWithdrawals()}
+function openWalletEdit(id){
+  selectedUser=users.find(u=>String(getUserId(u))===String(id));
+  if(!selectedUser)return;
+  document.getElementById('walletEditUserName').textContent=`${getName(selectedUser)} · ${getMobile(selectedUser)}`;
+  document.getElementById('walletEditType').value='demo';
+  document.getElementById('walletEditAmount').value=Number(selectedUser.bot_coins??0);
+  document.getElementById('walletEditNote').value='';
+  document.getElementById('walletEditError').classList.add('hidden');
+  updateWalletEditDifference();
+  document.getElementById('walletEditModal').classList.remove('hidden');
+  document.getElementById('walletEditModal').classList.add('flex');
+}
+function updateWalletEditDifference(){
+  if(!selectedUser)return;
+  const type=document.getElementById('walletEditType')?.value||'demo';
+  const current=Number(type==='real'?(selectedUser.real_coins??0):(selectedUser.bot_coins??0));
+  const next=Number(document.getElementById('walletEditAmount')?.value);
+  document.getElementById('walletEditCurrent').textContent='₹'+money(current);
+  const diff=Number.isFinite(next)?next-current:0;
+  const el=document.getElementById('walletEditDifference');
+  el.textContent=(diff>=0?'+':'')+'₹'+money(diff);
+  el.className='text-xl font-black mt-1 '+(diff>0?'text-emerald-300':diff<0?'text-red-300':'text-slate-300');
+}
+function closeWalletEdit(){
+  document.getElementById('walletEditModal').classList.add('hidden');
+  document.getElementById('walletEditModal').classList.remove('flex');
+  selectedUser=null;
+}
+async function saveWalletEdit(){
+  if(!selectedUser)return;
+  const btn=document.getElementById('saveWalletEditBtn'),err=document.getElementById('walletEditError');
+  const wallet=document.getElementById('walletEditType').value;
+  const amount=Number(document.getElementById('walletEditAmount').value);
+  const note=document.getElementById('walletEditNote').value.trim();
+  if(!Number.isFinite(amount)||amount<0){err.textContent='Enter a valid balance of 0 or more.';err.classList.remove('hidden');return}
+  const current=Number(wallet==='real'?(selectedUser.real_coins??0):(selectedUser.bot_coins??0));
+  if(amount===current){showToast('No balance change was made.');return}
+  if(!confirm(`Set ${getName(selectedUser)} ${wallet.toUpperCase()} wallet from ₹${money(current)} to ₹${money(amount)}?`))return;
+  btn.disabled=true;btn.textContent='Updating...';err.classList.add('hidden');
+  try{
+    const result=await rpc('admin_update_least_count_wallet_balance',{p_admin_id:ADMIN_ID,p_admin_password:ADMIN_PASSWORD,p_user_id:String(getUserId(selectedUser)),p_wallet_type:wallet,p_new_balance:amount,p_description:note||'Admin wallet balance correction'});
+    const row=Array.isArray(result)?result[0]:result;
+    showToast(row?.message||'Wallet balance updated');
+    closeWalletEdit();
+    await refreshAll();
+  }catch(e){err.textContent=e.message||'Unable to update wallet balance';err.classList.remove('hidden')}
+  finally{btn.disabled=false;btn.textContent='Update Balance'}
+}
+function openDepositAmountEdit(id){
+  const r=requests.find(x=>String(x.id)===String(id));
+  if(!r||r.status!=='pending')return;
+  const current=Number(r.amount||0);
+  const value=prompt(`Enter the corrected deposit amount for ${r.username}.\nCurrent amount: ₹${money(current)}`,String(current));
+  if(value===null)return;
+  const amount=Number(value);
+  if(!Number.isFinite(amount)||amount<=0){showToast('Enter a valid deposit amount greater than 0.',false);return}
+  const note=prompt('Optional admin note:',`Deposit amount corrected from ₹${money(current)} to ₹${money(amount)}`);
+  if(note===null)return;
+  updateDepositAmount(id,amount,note);
+}
+async function updateDepositAmount(id,amount,note){
+  try{
+    const result=await rpc('admin_edit_least_count_deposit_request_amount',{p_admin_id:ADMIN_ID,p_admin_password:ADMIN_PASSWORD,p_request_id:id,p_new_amount:amount,p_admin_note:note||null});
+    const row=Array.isArray(result)?result[0]:result;
+    showToast(row?.message||`Deposit amount updated to ₹${money(amount)}`);
+    await refreshAll();
+  }catch(e){showToast(e.message||'Unable to update deposit amount',false)}
+}
+
+function openRequest(id){selectedRequest=requests.find(r=>String(r.id)===String(id));if(!selectedRequest)return;creditMode='request';document.getElementById('creditModeBadge').textContent='DEPOSIT REQUEST';document.getElementById('creditModeBadge').className='pill bg-amber-500/10 text-amber-300';document.getElementById('creditModalTitle').textContent='Verify Deposit & Credit Wallet';document.getElementById('creditUserName').textContent=`${selectedRequest.username} · ${selectedRequest.mobile||'No mobile'}`;document.getElementById('creditCurrent').textContent='₹'+money(selectedRequest.current_coins);document.getElementById('creditRequested').textContent='₹'+money(selectedRequest.amount);document.getElementById('creditUtr').textContent=selectedRequest.utr||'—';document.getElementById('creditRequestId').textContent=selectedRequest.id;document.getElementById('creditCreatedAt').textContent=dt(selectedRequest.created_at);document.getElementById('creditAmount').value=selectedRequest.amount;document.getElementById('creditNote').value='UTR verified — deposit approved';document.getElementById('creditAmount').disabled=false;document.getElementById('rejectRequestBtn').classList.remove('hidden');document.getElementById('confirmCreditBtn').textContent='✓ Verify & Credit';document.getElementById('creditError').classList.add('hidden');document.getElementById('creditModal').classList.remove('hidden');document.getElementById('creditModal').classList.add('flex')}
+function openManualCredit(id){selectedUser=users.find(u=>String(getUserId(u))===String(id));if(!selectedUser)return;creditMode='manual';selectedRequest=null;document.getElementById('creditModeBadge').textContent='MANUAL DEMO WALLET CREDIT';document.getElementById('creditModeBadge').className='pill bg-sky-500/10 text-sky-300';document.getElementById('creditModalTitle').textContent='Add Wallet Coins';document.getElementById('creditUserName').textContent=`${getName(selectedUser)} · ${getMobile(selectedUser)}`;document.getElementById('creditCurrent').textContent='₹'+money(selectedUser.bot_coins??0);document.getElementById('creditRequested').textContent='—';document.getElementById('creditUtr').textContent='Manual credit';document.getElementById('creditRequestId').textContent='—';document.getElementById('creditCreatedAt').textContent=dt(new Date().toISOString());document.getElementById('creditAmount').value='';document.getElementById('creditAmount').disabled=false;document.getElementById('creditNote').value='Manual admin demo wallet credit';document.getElementById('rejectRequestBtn').classList.add('hidden');document.getElementById('confirmCreditBtn').textContent='Add Wallet Coins';document.getElementById('creditError').classList.add('hidden');document.getElementById('creditModal').classList.remove('hidden');document.getElementById('creditModal').classList.add('flex')}
+function closeCredit(){document.getElementById('creditModal').classList.add('hidden');document.getElementById('creditModal').classList.remove('flex');selectedUser=null;selectedRequest=null}
+async function creditSelected(){const btn=document.getElementById('confirmCreditBtn'),err=document.getElementById('creditError');const amount=Number(document.getElementById('creditAmount').value);const note=document.getElementById('creditNote').value.trim();if(!Number.isFinite(amount)||amount<=0){err.textContent='Enter a valid amount greater than 0.';err.classList.remove('hidden');return}if(creditMode==='request'&&selectedRequest){if(!confirm(`You verified UTR ${selectedRequest.utr}. Credit ₹${money(amount)} to ${selectedRequest.username}?`))return;btn.disabled=true;btn.textContent='Processing...';try{if(Math.round(Number(selectedRequest.amount||0)*100)!==Math.round(amount*100)){await rpc('admin_edit_least_count_deposit_request_amount',{p_admin_id:ADMIN_ID,p_admin_password:ADMIN_PASSWORD,p_request_id:selectedRequest.id,p_new_amount:amount,p_admin_note:note||`Deposit amount corrected from ₹${money(selectedRequest.amount)} to ₹${money(amount)}`});}const result=await rpc('admin_approve_least_count_deposit',{p_admin_id:ADMIN_ID,p_admin_password:ADMIN_PASSWORD,p_request_id:selectedRequest.id,p_admin_note:note});const row=Array.isArray(result)?result[0]:result;if(row?.status==='approved')showToast(`₹${money(row.amount||amount)} credited to ${row.username||selectedRequest.username}`);else showToast(row?.message||'Request processed',true);closeCredit();await refreshAll()}catch(e){err.textContent=e.message;err.classList.remove('hidden')}finally{btn.disabled=false;btn.textContent='✓ Verify & Credit'}return}if(creditMode==='manual'&&selectedUser){if(!confirm(`Add ₹${money(amount)} to ${getName(selectedUser)}?`))return;btn.disabled=true;btn.textContent='Updating...';try{const result=await rpc('admin_manual_least_count_wallet_credit',{p_admin_id:ADMIN_ID,p_admin_password:ADMIN_PASSWORD,p_user_id:String(getUserId(selectedUser)),p_amount:amount,p_description:note||'Manual admin wallet credit'});const row=Array.isArray(result)?result[0]:result;showToast(row?.message||`₹${money(amount)} added`);closeCredit();await refreshAll()}catch(e){err.textContent=e.message;err.classList.remove('hidden')}finally{btn.disabled=false;btn.textContent='Add Coins'}}}
+async function rejectSelected(){if(!selectedRequest)return;const note=document.getElementById('creditNote').value.trim();if(!confirm(`Reject deposit request with UTR ${selectedRequest.utr}? No wallet coins will be added.`))return;const b=document.getElementById('rejectRequestBtn'),err=document.getElementById('creditError');b.disabled=true;b.textContent='Rejecting...';try{await rpc('admin_reject_least_count_deposit',{p_admin_id:ADMIN_ID,p_admin_password:ADMIN_PASSWORD,p_request_id:selectedRequest.id,p_admin_note:note||'Deposit not approved'});showToast('Deposit request rejected');closeCredit();await refreshAll()}catch(e){err.textContent=e.message;err.classList.remove('hidden')}finally{b.disabled=false;b.textContent='Reject'}}
+document.querySelectorAll('.nav').forEach(b=>b.addEventListener('click',()=>showSection(b.dataset.section)));
+document.getElementById('confirmCreditBtn').addEventListener('click',creditSelected);
+document.getElementById('rejectRequestBtn').addEventListener('click',rejectSelected);
+document.getElementById('loginBtn').addEventListener('click',login);
+document.getElementById('adminPassword').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+document.getElementById('logoutBtn').addEventListener('click',()=>{sessionStorage.removeItem('lc_admin');location.reload()});
+async function login(){const id=document.getElementById('adminId').value.trim(),pw=document.getElementById('adminPassword').value,er=document.getElementById('loginError');if(id!==ADMIN_ID||pw!==ADMIN_PASSWORD){er.textContent='Invalid admin ID or password.';er.classList.remove('hidden');return}sessionStorage.setItem('lc_admin','1');document.getElementById('loginScreen').classList.add('hidden');document.getElementById('app').classList.remove('hidden');await refreshAll()}
+if(sessionStorage.getItem('lc_admin')==='1'){document.getElementById('loginScreen').classList.add('hidden');document.getElementById('app').classList.remove('hidden');refreshAll()}
+</script>
+</body>
+</html>
